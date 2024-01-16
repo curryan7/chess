@@ -9,7 +9,11 @@ package chess;
 public class ChessBoard {
 
     public ChessBoard() {
-        
+        int rows = 8;
+        int cols = 8;
+
+        char[][] chessboard = new char[rows][cols];
+
     }
 
     /**
