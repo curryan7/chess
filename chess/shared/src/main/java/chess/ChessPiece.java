@@ -36,6 +36,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
+
         throw new RuntimeException("Not implemented");
     }
 
@@ -47,6 +48,13 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        current_place = Places[myPosition.getRow()][myPosition.getColumn()];
+        type = getPieceType();
+        if (type == BISHOP) {
+            potential_moves = 
+        }
+
+
+
     }
 }
