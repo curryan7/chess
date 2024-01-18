@@ -48,13 +48,90 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        /*
         current_place = Places[myPosition.getRow()][myPosition.getColumn()];
         type = getPieceType();
-        if (type == BISHOP) {
-            potential_moves = 
+        potential_moves = []
+        move = current_place
+
+        public Blocked(array next_move) {
+        int var counter = 0
+            if (next_move[] != NULL){
+                 counter += 1;
+             }
+             if ((next_move.getRow()>8 OR next_move.getRow()<1) AND (next_move.getColumn()>8 OR next_move.getColumn()<1)){
+                    counter += 1;
+             }
+             return counter
+        };
+
+        public Maybe(array move){
+
+            while (maybe_move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0){
+                if (move = NULL) {
+                    append move to potential_moves (list)
+                }
+                move += move(additions of move)
+            }
         }
 
 
+
+        if (type == BISHOP) {
+            counter = 0
+            while (counter<4){
+                counter = Blocked (move[+1,+1])
+                counter += Blocked (move[-1,+1])
+                counter += Blocked (move[-1,-1])
+                counter += Blocked (move[+1,-1])
+                Maybe(move[+1,+1])
+                Maybe(move[-1,+1])
+                Maybe(move[-1,-1])
+                Maybe(move[+1,-1])
+                }
+            return potential_moves
+         }
+
+
+            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
+            {
+                maybe_move = move[+1][+1]
+                if maybe_move array is empty {
+                    move = maybe_move
+                    append move to potential_moves list}
+                move = maybe_move
+                }
+            move = current_place
+            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
+            {
+                maybe_move = move[-1][+1]
+                if maybe_move array is empty {
+                    move = maybe_move
+                    append move to potential_moves list}
+                move = maybe_move
+                }
+            move = current_place
+            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
+            {
+                maybe_move = move[-1][-1]
+                if maybe_move array is empty {
+                    move = maybe_move
+                    append move to potential_moves list}
+                move = maybe_move
+                }
+            move = current_place
+            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
+            {
+                maybe_move = move[+1][-1]
+                if maybe_move array is empty {
+                    move = maybe_move
+                    append move to potential_moves list}
+                move = maybe_move
+                }
+            move = current_place
+         return potential_moves (which is a list)
+         */
+        }
 
     }
 }
