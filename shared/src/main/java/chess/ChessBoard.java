@@ -9,7 +9,6 @@ package chess;
 public class ChessBoard {
     private ChessPiece[][] Places = new ChessPiece[8][8];
     public ChessBoard() {
-
     }
 
     /**
@@ -20,7 +19,6 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         Places[position.getRow()][position.getColumn()] = piece;
-
     }
 
     /**
@@ -41,4 +39,36 @@ public class ChessBoard {
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
     }
+    /* check the type and color to the piece
+    put pawns on:
+
+    [2,1-->8] Black
+    [7,1-->8] White
+
+    put rooks on:
+    [1,1] Black
+    [1,8]
+    [8,1] White
+    [8,8]
+
+    put knights on:
+    [1,2] Black
+    [1,7]
+    [8,2] White
+    [8,7]
+
+    put bishops on:
+    [1,3] Black
+    [1,6]
+    [8,3] White
+    [8,6]
+
+    put queen on:
+    [1,4] Black
+    [8,4] White
+
+    put king on:
+    [1,5] Black
+    [1,8] White
+     */
 }

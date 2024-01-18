@@ -11,6 +11,7 @@ import java.util.Collection;
 public class ChessPiece {
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+
     }
 
     /**
@@ -67,7 +68,7 @@ public class ChessPiece {
 
         public Maybe(array move){
 
-            while (maybe_move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0){
+            while (maybe_move.getRow()<=8 and >=1 and move.getColumn()<=8 and >=1){
                 if (move = NULL) {
                     append move to potential_moves (list)
                 }
@@ -131,7 +132,8 @@ public class ChessPiece {
             move = current_place
          return potential_moves (which is a list)
          */
+        throw new RuntimeException("Not implemented");
         }
 
     }
-}
+
