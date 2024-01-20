@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -52,90 +53,130 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        /*
-        current_place = Places[myPosition.getRow()][myPosition.getColumn()];
-        type = getPieceType();
-        potential_moves = []
-        move = current_place
 
-        public Blocked(array next_move) {
-        int var counter = 0
-            if (next_move[] != NULL){
-                 counter += 1;
-             }
-             if ((next_move.getRow()>8 OR next_move.getRow()<1) AND (next_move.getColumn()>8 OR next_move.getColumn()<1)){
-                    counter += 1;
-             }
-             return counter
-        };
+        ArrayList<ChessMove> potential_moves = new ArrayList<>();
+        ChessPiece.PieceType variant = board.getPiece(myPosition).getPieceType();
 
-        public Maybe(array move){
+        if (variant==PieceType.BISHOP){
+            int i = 0;
+            int current_row = myPosition.getRow();
+            int current_col = myPosition.getColumn();
 
-            while (maybe_move.getRow()<=8 and >=1 and move.getColumn()<=8 and >=1){
-                if (move = NULL) {
-                    append move to potential_moves (list)
+            while (i+current_row<8 && current_col+i<8){
+                i = i+1;
+                ChessPosition check_move = new ChessPosition(current_row+i,current_col+i);
+                if (board.getPiece(check_move)!=null) {
+                    ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                        potential_moves.add(new_move);
+                        break;}
+                    else {
+                        break;
+                    }
                 }
-                move += move(additions of move)
+                else {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                }
+
+            }
+            i = 0;
+            current_row = myPosition.getRow();
+            current_col = myPosition.getColumn();
+
+            while (current_row-i>1 && current_col-i>1){
+                i = i+1;
+                ChessPosition check_move = new ChessPosition(current_row-i,current_col-i);
+                if (board.getPiece(check_move)!=null) {
+                    ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                        potential_moves.add(new_move);
+                        break;}
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                }
+
+
+            }
+            i = 0;
+            current_row = myPosition.getRow();
+            current_col = myPosition.getColumn();
+
+            while (current_row-i>1 && current_col+i<8){
+                i = i+1;
+                ChessPosition check_move = new ChessPosition(current_row-i,current_col+i);
+                if (board.getPiece(check_move)!=null) {
+                    ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                        potential_moves.add(new_move);
+                        break;}
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                }
+            }
+            i = 0;
+            current_row = myPosition.getRow();
+            current_col = myPosition.getColumn();
+
+            while (current_row+i<8 && current_col-i>1){
+                i = i+1;
+                ChessPosition check_move = new ChessPosition(current_row+i,current_col-i);
+                if (board.getPiece(check_move)!=null) {
+                    ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                        potential_moves.add(new_move);
+                        break;}
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                }
+
             }
         }
+        if (variant==PieceType.KING){
+            int current_row = myPosition.getRow();
+            int current_col = myPosition.getColumn();
+            if (current_row<8 && current_col<8) {
+                ChessPosition check_move = new ChessPosition(current_row+1,current_col+1);
+                if (board.getPiece(check_move)!=null) {
+                    ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                        potential_moves.add(new_move);
+                        }
+                    else {
 
+                    }
+                }
+                else {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                }
 
+            }
 
-        if (type == BISHOP) {
-            counter = 0
-            while (counter<4){
-                counter = Blocked (move[+1,+1])
-                counter += Blocked (move[-1,+1])
-                counter += Blocked (move[-1,-1])
-                counter += Blocked (move[+1,-1])
-                Maybe(move[+1,+1])
-                Maybe(move[-1,+1])
-                Maybe(move[-1,-1])
-                Maybe(move[+1,-1])
-                }
-            return potential_moves
-         }
+        }
+        System.out.println(potential_moves);
+        return potential_moves;
 
-
-            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
-            {
-                maybe_move = move[+1][+1]
-                if maybe_move array is empty {
-                    move = maybe_move
-                    append move to potential_moves list}
-                move = maybe_move
-                }
-            move = current_place
-            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
-            {
-                maybe_move = move[-1][+1]
-                if maybe_move array is empty {
-                    move = maybe_move
-                    append move to potential_moves list}
-                move = maybe_move
-                }
-            move = current_place
-            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
-            {
-                maybe_move = move[-1][-1]
-                if maybe_move array is empty {
-                    move = maybe_move
-                    append move to potential_moves list}
-                move = maybe_move
-                }
-            move = current_place
-            while (move.getRow()<=8 and >=0 and move.getColumn()<=8 and >=0)
-            {
-                maybe_move = move[+1][-1]
-                if maybe_move array is empty {
-                    move = maybe_move
-                    append move to potential_moves list}
-                move = maybe_move
-                }
-            move = current_place
-         return potential_moves (which is a list)
-         */
-        throw new RuntimeException("Not implemented");
         }
 
     @Override
