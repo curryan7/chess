@@ -664,6 +664,37 @@ public class ChessPiece {
 
             }
         }
+        if (variant==PieceType.PAWN){
+            int current_row = myPosition.getRow();
+            int current_col = myPosition.getColumn();
+
+            if (board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
+                ChessPosition check_move = new ChessPosition(current_row +1, current_col);
+                if (myPosition.getRow()==2 && board.getPiece(check_move)==null) {
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
+                    potential_moves.add(new_move);
+                   ChessPosition check_move2 = new ChessPosition(current_row + 2, current_col);
+                    if (board.getPiece(check_move2) == null){
+                        ChessMove new_move2 = new ChessMove(myPosition,check_move2,null);
+                        potential_moves.add(new_move2);
+                    }
+                }
+            }
+
+            if (board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.BLACK) {
+                ChessPosition check_move = new ChessPosition(current_row - 1, current_col);
+                if (myPosition.getRow() == 7 && board.getPiece(check_move) == null) {
+                    ChessMove new_move = new ChessMove(myPosition, check_move, null);
+                    potential_moves.add(new_move);
+                    ChessPosition check_move2 = new ChessPosition(current_row - 2, current_col);
+                    if (board.getPiece(check_move2) == null) {
+                        ChessMove new_move2 = new ChessMove(myPosition, check_move2, null);
+                        potential_moves.add(new_move2);
+                    }
+                }
+            }
+
+            }
         return potential_moves;
         }
 
