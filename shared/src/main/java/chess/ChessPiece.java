@@ -278,7 +278,7 @@ public class ChessPiece {
             int current_row = myPosition.getRow();
             int current_col = myPosition.getColumn();
             ChessPosition check_move = new ChessPosition(current_row+2,current_col+1);
-            if (current_row<8 && current_col<8) {
+            if (check_move.getRow()<9 && check_move.getColumn()<9) {
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
@@ -293,7 +293,7 @@ public class ChessPiece {
             }
 
             check_move = new ChessPosition(current_row-2, current_col+1);
-            if (current_row>0 && current_col<8){
+            if (check_move.getRow()>0 && check_move.getColumn()<9){
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
@@ -323,7 +323,7 @@ public class ChessPiece {
             }
 
             check_move = new ChessPosition(current_row+1, current_col-2);
-            if (check_move.getRow()<8 && check_move.getColumn()>0){
+            if (check_move.getRow()<9 && check_move.getColumn()>0){
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
@@ -338,7 +338,7 @@ public class ChessPiece {
             }
 
             check_move = new ChessPosition(current_row+2, current_col-1);
-            if (check_move.getRow()<8 && check_move.getColumn()>0){
+            if (check_move.getRow()<9 && check_move.getColumn()>0){
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
@@ -353,7 +353,7 @@ public class ChessPiece {
             }
 
             check_move = new ChessPosition(current_row+1, current_col+2);
-            if (check_move.getRow()<8 && check_move.getColumn()<8){
+            if (check_move.getRow()<9 && check_move.getColumn()<9){
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
@@ -368,7 +368,7 @@ public class ChessPiece {
             }
 
             check_move = new ChessPosition(current_row-1, current_col+2);
-            if (check_move.getRow()>0 && check_move.getColumn()<8){
+            if (check_move.getRow()>0 && check_move.getColumn()<9){
                 if (board.getPiece(check_move)!=null) {
                     ChessGame.TeamColor color_check = board.getPiece(check_move).getTeamColor();
                     if (color_check != this.getTeamColor()){
