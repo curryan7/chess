@@ -667,29 +667,64 @@ public class ChessPiece {
         if (variant==PieceType.PAWN){
             int current_row = myPosition.getRow();
             int current_col = myPosition.getColumn();
+            ChessPosition attack_position1 = new ChessPosition(current_row+1,current_col+1);
+            ChessPosition attack_position2 = new ChessPosition(current_row+1,current_col-1);
+            ChessPosition attack_position3 = new ChessPosition(current_row-1,current_col+1);
+            ChessPosition attack_position4 = new ChessPosition(current_row-1,current_col-1);
 
             if (board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
                 ChessPosition check_move = new ChessPosition(current_row +1, current_col);
-                if (myPosition.getRow()==2 && board.getPiece(check_move)==null) {
+                if (board.getPiece(check_move)==null){
                     ChessMove new_move = new ChessMove(myPosition,check_move,null);
                     potential_moves.add(new_move);
-                   ChessPosition check_move2 = new ChessPosition(current_row + 2, current_col);
-                    if (board.getPiece(check_move2) == null){
+                    ChessPosition check_move2 = new ChessPosition(current_row + 2, current_col);
+                    if (myPosition.getRow()==2 && board.getPiece(check_move2)==null) {
                         ChessMove new_move2 = new ChessMove(myPosition,check_move2,null);
                         potential_moves.add(new_move2);
                     }
                 }
+
+                if (board.getPiece(attack_position1)!=null){
+                    ChessGame.TeamColor color_check = board.getPiece(attack_position1).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,attack_position1,null);
+                        potential_moves.add(new_move);
+                    }
+                }
+                if (board.getPiece(attack_position2)!=null){
+                    ChessGame.TeamColor color_check = board.getPiece(attack_position2).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,attack_position2,null);
+                        potential_moves.add(new_move);
+                    }
+                }
+
             }
 
             if (board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.BLACK) {
-                ChessPosition check_move = new ChessPosition(current_row - 1, current_col);
-                if (myPosition.getRow() == 7 && board.getPiece(check_move) == null) {
-                    ChessMove new_move = new ChessMove(myPosition, check_move, null);
+                ChessPosition check_move = new ChessPosition(current_row -1, current_col);
+                if (board.getPiece(check_move)==null){
+                    ChessMove new_move = new ChessMove(myPosition,check_move,null);
                     potential_moves.add(new_move);
                     ChessPosition check_move2 = new ChessPosition(current_row - 2, current_col);
-                    if (board.getPiece(check_move2) == null) {
-                        ChessMove new_move2 = new ChessMove(myPosition, check_move2, null);
+                    if (myPosition.getRow()==7 && board.getPiece(check_move2)==null) {
+                        ChessMove new_move2 = new ChessMove(myPosition,check_move2,null);
                         potential_moves.add(new_move2);
+                    }
+                }
+
+                if (board.getPiece(attack_position3)!=null){
+                    ChessGame.TeamColor color_check = board.getPiece(attack_position3).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,attack_position3,null);
+                        potential_moves.add(new_move);
+                    }
+                }
+                if (board.getPiece(attack_position4)!=null){
+                    ChessGame.TeamColor color_check = board.getPiece(attack_position4).getTeamColor();
+                    if (color_check != this.getTeamColor()){
+                        ChessMove new_move = new ChessMove(myPosition,attack_position4,null);
+                        potential_moves.add(new_move);
                     }
                 }
             }
