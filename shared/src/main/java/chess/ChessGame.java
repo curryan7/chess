@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Collection;
+
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,6 +11,9 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    ChessGame.TeamColor turn;
+    ChessBoard board = new ChessBoard();
+
 
     public ChessGame() {
 
@@ -18,7 +23,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turn;
     }
 
     /**
@@ -27,7 +32,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.turn = team;
     }
 
     /**
@@ -46,9 +51,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
-    }
-
+        if(board.getPiece(startPosition)!= null){
+            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        }
+        return null;
+    };
     /**
      * Makes a move in a chess game
      *
@@ -56,8 +63,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        if (validMoves(move.getStartPosition())!=null){
+            ChessPiece[][] Places = this.getBoard().Places;
+            System.out.println(Arrays.deepToString(Places));
+//            Places[move.getStartPosition().getRow()][move.getEndPosition().getColumn()] = null;
+//            Places[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = board.getPiece(move.getStartPosition());
+        }
     }
+
 
     /**
      * Determines if the given team is in check
@@ -96,7 +109,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -105,6 +118,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
     }
 }
