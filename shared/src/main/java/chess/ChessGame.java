@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 
 /**
@@ -64,10 +65,12 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (validMoves(move.getStartPosition())!=null){
-            ChessPiece[][] Places = this.getBoard().Places;
-            System.out.println(Arrays.deepToString(Places));
-//            Places[move.getStartPosition().getRow()][move.getEndPosition().getColumn()] = null;
-//            Places[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = board.getPiece(move.getStartPosition());
+            ChessPiece[][] Places = this.board.Places;
+            Places[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
+            Places[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = board.getPiece(move.getStartPosition());
+
+// check team color here instead of above
+
         }
     }
 
@@ -119,5 +122,26 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return turn == chessGame.turn && Objects.equals(board, chessGame.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, board);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "turn=" + turn +
+                ", board=" + board +
+                '}';
     }
 }
