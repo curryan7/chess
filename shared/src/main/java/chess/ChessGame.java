@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 
@@ -52,7 +53,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if(board.getPiece(startPosition)!= null){
+        if(board.getPiece(startPosition)!=null){
             return board.getPiece(startPosition).pieceMoves(board, startPosition);
         }
         return null;
@@ -64,15 +65,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (validMoves(move.getStartPosition())!=null){
+        Collection<ChessMove> list = validMoves(move.getStartPosition());
+
+        if (list == null) {
+            throw new InvalidMoveException("no");
+        }
+        System.out.println(list.contains(move));
+        if (list.contains(move)){
             ChessPiece[][] Places = this.board.Places;
-            Places[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
-            Places[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = board.getPiece(move.getStartPosition());
+            board.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()),board.getPiece(move.getStartPosition()));
+            board.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()), null);
+        }
+        else{
+            throw new InvalidMoveException("yes");
+        }
 
 // check team color here instead of above
-
         }
-    }
+
 
 
     /**
