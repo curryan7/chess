@@ -178,6 +178,7 @@ public class ChessPiece {
 
         if (variant == PieceType.KING){
             AddMovesSingle(1,0,myPosition,board,potential_moves);
+//            KingPosition(1,0, myPosition);
             AddMovesSingle(-1,0,myPosition,board,potential_moves);
             AddMovesSingle(0,-1,myPosition,board,potential_moves);
             AddMovesSingle(0,1,myPosition,board,potential_moves);
