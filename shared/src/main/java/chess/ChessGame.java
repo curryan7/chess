@@ -42,16 +42,28 @@ public class ChessGame {
         BLACK
     }
 
-    public void unApplyMove (ChessMove move){
-        board.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()),board.getPiece(move.getEndPosition()));
-        board.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()), null);
-        switch(getTeamTurn()) {
-            case TeamColor.WHITE:
-                    this.setTeamTurn(TeamColor.BLACK);
-            case TeamColor.BLACK:
-                    this.setTeamTurn(TeamColor.WHITE);
-                }
-        }
+    public void unApplyMove (ChessMove move, ChessPiece startPiece, ChessPiece endPiece){
+//        ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
+//        ChessPiece startPiece = board.getPiece(startPosition);
+//        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+//        ChessPiece endPiece = board.getPiece(endPosition);
+
+        board.addPiece(startPosition, endPiece);
+        board.addPiece(endPosition, startPiece);
+    }
+    public void ApplyMove(ChessMove move){
+        // we have our chess pieces and chess positions that are relevant to the function
+        ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
+        ChessPiece startPiece = board.getPiece(startPosition);
+        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+        ChessPiece endPiece = board.getPiece(endPosition);
+            // this is for normal case when there is no piece in the endPosition
+        //applied the move
+            board.addPiece(endPosition, startPiece);
+            board.addPiece(startPosition, endPiece);
+    }
+
+
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -61,21 +73,38 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        switch(getTeamTurn()) {
-            case TeamColor.BLACK:
-                Collection<ChessMove> list = board.getPiece(startPosition).pieceMoves(board,startPosition);
-                
+        Collection<ChessMove> list = board.getPiece(startPosition).pieceMoves(board, startPosition);
+        Collection<ChessMove> invalidList = new HashSet<ChessMove>();
 
-                isInCheck(TeamColor.BLACK);
-            case TeamColor.WHITE:
-                break;
+
+        if(board.getPiece(startPosition)!=null) {
+                if(this.getTeamTurn()==TeamColor.BLACK){
+                    for (ChessMove move : list) {
+                        ApplyMove(move);
+                        if (isInCheck(TeamColor.BLACK)) {
+                            invalidList.add(move);
+                        }
+                        unApplyMove(move);
+                    }
+                }
+
+                if(this.getTeamTurn()==TeamColor.WHITE)
+                    for (ChessMove move : list) {
+                        ApplyMove(move);
+                        if (isInCheck(TeamColor.WHITE)) {
+                            invalidList.add(move);
+                        }
+                        unApplyMove(move);
+                    }
             }
-
-        if(board.getPiece(startPosition)!=null){
-            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+            for (ChessMove move:invalidList){
+                list.remove(move);
+            }
+        return list;
         }
-        return null;
-    };
+
+
+
     /**
      * Makes a move in a chess game
      *
@@ -83,22 +112,36 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn());
+        ChessPiece startPiece = board.getPiece(startPosition);
         Collection<ChessMove> list = validMoves(move.getStartPosition());
+        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn());
+        ChessPiece endPiece = board.getPiece(endPosition);
+        if (startPiece==null){
+            throw new InvalidMoveException("no piece there");
+        }
 
         if (list.isEmpty()) {
+            if(isInCheck(this.getTeamTurn())){
+
+                throw new InvalidMoveException("You're in check");
+            }
             throw new InvalidMoveException("no valid moves");
         }
 
-        if (board.getPiece(move.getStartPosition()).getTeamColor()!=this.getTeamTurn()){
+        if (startPiece.getTeamColor()!=this.getTeamTurn()){
             throw new InvalidMoveException("not your turn");
         }
-
         if (list.contains(move)){
-            board.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()),board.getPiece(move.getStartPosition()));
-//            if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING){
-//                KingPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn());
-//            }
-            board.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()), null);
+            if(endPiece != null && startPiece.getTeamColor() != endPiece.getTeamColor()){
+                board.addPiece(endPosition,startPiece);
+                board.addPiece(startPosition,null);
+            }
+            else{
+            board.addPiece(endPosition,startPiece);
+            board.addPiece(startPosition,endPiece);
+            }
+
             if (this.getTeamTurn()==TeamColor.WHITE){
                 this.setTeamTurn(TeamColor.BLACK);
             }
@@ -135,11 +178,7 @@ public class ChessGame {
                                         ChessPosition enemy = new ChessPosition(k+1,l+1);
                                         Collection<ChessMove> list = board.getPiece(enemy).pieceMoves(board,enemy);
                                         for (ChessMove move:list){
-                                            System.out.println("endPosition: " + move.getEndPosition());
-                                            System.out.println("kingPosition: " + kingPosition);
-
                                             if(kingPosition.equals(move.getEndPosition())){
-                                                System.out.println("here");
                                                 return true;
                                             }
                                         }
