@@ -18,6 +18,22 @@ public class ChessGame {
 
     }
 
+    public ChessBoard DeepCopy(ChessBoard board) {
+        ChessBoard copyBoard = new ChessBoard();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPiece originalPiece = board.Places[i][j];
+                if (originalPiece != null) {
+                    ChessPiece clonedPiece = new ChessPiece(originalPiece.getTeamColor(), originalPiece.getPieceType()); // Assuming ChessPiece has a copy constructor
+                    copyBoard.Places[i][j] = clonedPiece;
+                }
+            }
+        }
+
+        return copyBoard;
+    }
+
     /**
      * @return Which team's turn it is
      */
@@ -41,27 +57,28 @@ public class ChessGame {
         WHITE,
         BLACK
     }
-
-    public void unApplyMove (ChessMove move, ChessPiece startPiece, ChessPiece endPiece){
-//        ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
-//        ChessPiece startPiece = board.getPiece(startPosition);
-//        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-//        ChessPiece endPiece = board.getPiece(endPosition);
-
-        board.addPiece(startPosition, endPiece);
-        board.addPiece(endPosition, startPiece);
-    }
-    public void ApplyMove(ChessMove move){
+    public void ApplyMove(ChessMove move, ChessBoard testBoard){
         // we have our chess pieces and chess positions that are relevant to the function
         ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
-        ChessPiece startPiece = board.getPiece(startPosition);
         ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+        ChessPiece startPiece = board.getPiece(startPosition);
         ChessPiece endPiece = board.getPiece(endPosition);
-            // this is for normal case when there is no piece in the endPosition
+        // this is for normal case when there is no piece in the endPosition
         //applied the move
-            board.addPiece(endPosition, startPiece);
-            board.addPiece(startPosition, endPiece);
+        testBoard.addPiece(endPosition, startPiece);
+        testBoard.addPiece(startPosition, null);
     }
+
+    public void unApplyMove (ChessMove move, ChessBoard testBoard){
+        ChessPosition startPosition = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
+        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+        ChessPiece startPiece = board.getPiece(endPosition);
+        ChessPiece endPiece = board.getPiece(startPosition);
+
+        testBoard.addPiece(startPosition, endPiece);
+        testBoard.addPiece(endPosition, startPiece);
+    }
+
 
 
 
@@ -75,33 +92,27 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> list = board.getPiece(startPosition).pieceMoves(board, startPosition);
         Collection<ChessMove> invalidList = new HashSet<ChessMove>();
-
-
-        if(board.getPiece(startPosition)!=null) {
-                if(this.getTeamTurn()==TeamColor.BLACK){
-                    for (ChessMove move : list) {
-                        ApplyMove(move);
-                        if (isInCheck(TeamColor.BLACK)) {
-                            invalidList.add(move);
-                        }
-                        unApplyMove(move);
+        for (ChessMove move : list) {
+           ChessBoard testBoard = DeepCopy(board);
+           ApplyMove(move, testBoard);
+           switch(this.getTeamTurn()){
+               case TeamColor.BLACK:
+                   if (isInCheck(TeamColor.BLACK)) {
+                        invalidList.add(move);
+                   }
+                   case TeamColor.WHITE:
+                       if (isInCheck(TeamColor.WHITE)) {
+                        invalidList.add(move);
                     }
-                }
-
-                if(this.getTeamTurn()==TeamColor.WHITE)
-                    for (ChessMove move : list) {
-                        ApplyMove(move);
-                        if (isInCheck(TeamColor.WHITE)) {
-                            invalidList.add(move);
-                        }
-                        unApplyMove(move);
-                    }
-            }
-            for (ChessMove move:invalidList){
-                list.remove(move);
-            }
-        return list;
+           }
+           unApplyMove(move, testBoard);
         }
+
+        for (ChessMove move:invalidList){
+            list.remove(move);
+        }
+        return list;
+    }
 
 
 
