@@ -69,19 +69,19 @@ public class ChessGame {
         testBoard.addPiece(startPosition, null);
     }
 
-    public void unApplyMove (ChessMove move, ChessBoard testBoard){
-        ChessPosition startPosition = move.getStartPosition();
-        ChessPosition endPosition = move.getEndPosition();
-        ChessPiece startPiece = board.getPiece(endPosition);
-        ChessPiece endPiece = board.getPiece(startPosition);
-
-        testBoard.addPiece(startPosition, startPiece);
-        testBoard.addPiece(endPosition, endPiece);
-
-//        testBoard.addPiece(startPosition, endPiece);
-//        testBoard.addPiece(endPosition, startPiece);
-
-    }
+//    public void unApplyMove (ChessMove move, ChessBoard testBoard){
+//        ChessPosition startPosition = move.getStartPosition();
+//        ChessPosition endPosition = move.getEndPosition();
+//        ChessPiece startPiece = board.getPiece(endPosition);
+//        ChessPiece endPiece = board.getPiece(startPosition);
+//
+//        testBoard.addPiece(startPosition, startPiece);
+//        testBoard.addPiece(endPosition, endPiece);
+//
+////        testBoard.addPiece(startPosition, endPiece);
+////        testBoard.addPiece(endPosition, startPiece);
+//
+//    }
 
 
 
