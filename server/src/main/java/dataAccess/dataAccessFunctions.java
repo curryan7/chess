@@ -1,15 +1,20 @@
 package dataAccess;
+
+import chess.ChessGame;
+import model.JoinData;
 import model.UserData;
 import model.AuthData;
 import model.GameData;
+import java.util.Random;
 
 import java.util.*;
 import java.util.ArrayList;
 
 public class dataAccessFunctions {
+    static Random rand = new Random();
     private static Map<String, UserData> users = new HashMap<>();
     private static Map<String, AuthData> authTokens = new HashMap<>();
-    private static Map<String, GameData> games = new HashMap<>();
+    private static Map<Integer, GameData> games = new HashMap<>();
 
     public static void clearoff() throws DataAccessException {
         users.clear();
@@ -21,7 +26,7 @@ public class dataAccessFunctions {
         return users.get(username);
     }
 
-    public static Object grabPassword(String username, String password) throws DataAccessException {
+    public static String grabPassword(String username, String password) throws DataAccessException {
         UserData userinfo = users.get(username);
         return userinfo.password();
     }
@@ -36,7 +41,7 @@ public class dataAccessFunctions {
         }
     }
 
-    public static Object createAuthToken(String username) {
+    public static AuthData createAuthToken(String username) {
         AuthData authToken = new AuthData(username, UUID.randomUUID().toString());
         authTokens.put(username, authToken);
         return authToken;
@@ -66,9 +71,43 @@ public class dataAccessFunctions {
         }
     }
 
-    public static ArrayList<GameData> getGamesList() throws DataAccessException{
+    public static ArrayList<GameData> getGamesList() {
         ArrayList<GameData> gameList = new ArrayList<>();
         gameList.addAll(games.values());
         return gameList;
+    }
+
+    public static GameData createGame(GameData gameData) {
+        int gameID = rand.nextInt(500);
+        GameData finalGameData = new GameData(gameID,gameData.whiteUsername(),gameData.blackUsername(),gameData.gameName(),gameData.game());
+        games.put(gameID, finalGameData);
+        return finalGameData;
+    }
+
+    public static Boolean verifyGameID(int gameID){
+        return games.get(gameID) != null;
+    }
+
+    public static Boolean verifyPlayerData(JoinData data){
+        return ((Objects.equals(data.playerColor(), "WHITE") || (Objects.equals(data.playerColor(), "BLACK") || data.playerColor()==null)));
+    }
+
+    public static void updateGame(JoinData joinData){
+        int gameID = joinData.gameID();
+        GameData gameData = games.get(gameID);
+        String blackUser = gameData.blackUsername();
+        String whiteUser = gameData.whiteUsername();
+        String gameName = gameData.gameName();
+        ChessGame chessGame = gameData.game();
+
+        if(Objects.equals(joinData.playerColor(), "WHITE")){
+            GameData updatedGame = new GameData(gameID, whiteUser, null, gameName, chessGame);
+            games.replace(gameID, updatedGame);
+        }
+        else if (Objects.equals(joinData.playerColor(), "BLACK")){
+            GameData updatedGame = new GameData(gameID, null, blackUser, gameName, chessGame);
+            games.replace(gameID, updatedGame);
+        }
+
     }
 }
