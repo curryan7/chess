@@ -7,7 +7,7 @@ import model.JoinData;
 import model.GameCreationResult;
 import model.*;
 
-public class gameService {
+public class GameService {
     public static Boolean verifyToken(String token) {
         return DataAccessFunctions.verifyAuthToken(token);
     }

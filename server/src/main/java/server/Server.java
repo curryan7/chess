@@ -5,9 +5,9 @@ import model.*;
 import spark.*;
 import com.google.gson.Gson;
 
-import service.clearService;
-import service.userService;
-import service.gameService;
+import service.ClearService;
+import service.UserService;
+import service.GameService;
 
 
 public class Server {
@@ -43,7 +43,7 @@ public class Server {
         // send it back to request
         Gson gson = new Gson();
         try {
-            clearService.clearOut();
+            ClearService.clearOut();
             res.status(200);
             return gson.toJson(res.body());
         } catch (DataAccessException e) {
@@ -56,7 +56,7 @@ public class Server {
         Gson gson = new Gson();
 
         UserData userData = gson.fromJson(req.body(), UserData.class);
-        RegisterResult authToken = userService.registerUser(userData);
+        RegisterResult authToken = UserService.registerUser(userData);
         if(authToken.message()==null){
             res.status(200);
         }
@@ -73,7 +73,7 @@ public class Server {
     private Object login(Request req, Response res) {
         Gson gson = new Gson();
         UserData userData = gson.fromJson(req.body(), UserData.class);
-        LoginResult authToken = userService.loginUser(userData);
+        LoginResult authToken = UserService.loginUser(userData);
         if (authToken.message() == null) {
             res.status(200);
         }
@@ -97,7 +97,7 @@ public class Server {
             return res.body();
         }
 
-        LogoutResult logoutResponse = userService.logoutUser(authTokenHeader);
+        LogoutResult logoutResponse = UserService.logoutUser(authTokenHeader);
 
         if (logoutResponse.message() == null){
             res.status(200);
@@ -119,7 +119,7 @@ public class Server {
             return res.body();
         }
 
-            GameList gameList = gameService.listGames(authTokenHeader);
+            GameList gameList = GameService.listGames(authTokenHeader);
 
         if (gameList.message()== null) {
             res.status(200);
@@ -145,7 +145,7 @@ public class Server {
             return res.body();
         }
 
-        GameCreationResult result = gameService.createGame(authTokenHeader, gameData);
+        GameCreationResult result = GameService.createGame(authTokenHeader, gameData);
 
         if (result.message()==null){
             res.status(200);
@@ -179,7 +179,7 @@ public class Server {
         }
 
         try {
-            gameService.joinGame(joinData, authTokenHeader);
+            GameService.joinGame(joinData, authTokenHeader);
             res.status(200);
             SuccessJoin successJoin = new SuccessJoin(null);
             return gson.toJson(successJoin);

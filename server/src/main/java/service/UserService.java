@@ -8,7 +8,7 @@ import model.LoginResult;
 import model.LogoutResult;
 import model.RegisterResult;
 
-public class userService {
+public class UserService {
     public static Object getUser(UserData user) throws DataAccessException{
         String username = user.username();
         return DataAccessFunctions.grabUser(username);

@@ -93,7 +93,7 @@ public class ChessPiece {
             ChessPosition checkMove = new ChessPosition(currentRow+rowChange,currentCol+colChange);
             ChessPiece pieceAtMove = board.getPiece(checkMove);
             if (pieceAtMove == null){
-                if (checkMove.getRow()==8 | checkMove.getRow()==1){
+                if (checkPromoPotential(checkMove.getRow())){
                     promotePiece(potentialMoves, myPosition, checkMove);
                 }
                 else {
@@ -103,6 +103,9 @@ public class ChessPiece {
         }
     }
 
+    public Boolean checkPromoPotential(int row){
+        return row == 1 | row == 8;
+    }
     public void promotePiece(HashSet<ChessMove> potentialMoves,ChessPosition myPosition, ChessPosition checkMove){
         potentialMoves.add(new ChessMove(myPosition, checkMove, PieceType.QUEEN));
         potentialMoves.add(new ChessMove(myPosition, checkMove, PieceType.BISHOP));
@@ -120,7 +123,7 @@ public class ChessPiece {
             if (pieceAtMove != null){
                 ChessGame.TeamColor colorCheck = this.getTeamColor();
                 if(colorCheck != board.getPiece(checkMove).getTeamColor()) {
-                    if (checkMove.getRow()==8 | checkMove.getRow()==1){
+                    if (checkPromoPotential(checkMove.getRow())){
                         promotePiece(potentialMoves, myPosition, checkMove);
                     }
                     else {
