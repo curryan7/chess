@@ -55,13 +55,19 @@ public class userService {
     public static loginResult loginUser(UserData user){
         String username = user.username();
         String password = user.password();
+
         try {
-            if (getUser(user) != null) {
-                String existingPassword = dataAccessFunctions.grabPassword(username, password);
-                if (existingPassword.equals(password)) {
-                    return new loginResult(username, createAuth(user).authToken(), null);
+            if(username != null || password != null){
+                if (getUser(user) != null) {
+                    String existingPassword = dataAccessFunctions.grabPassword(username, password);
+                    if (existingPassword.equals(password)) {
+                        return new loginResult(username, createAuth(user).authToken(), null);
+                    }
+                    else{
+                        throw new DataAccessException("Error: unauthorized");
+                    }
                 }
-                else{
+                else {
                     throw new DataAccessException("Error: unauthorized");
                 }
             }

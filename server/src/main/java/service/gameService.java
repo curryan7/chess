@@ -7,9 +7,6 @@ import model.JoinData;
 import model.gameCreationResult;
 import model.gameList;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class gameService {
     public static Boolean verifyToken(String token) {
         return dataAccessFunctions.verifyAuthToken(token);
@@ -19,7 +16,7 @@ public class gameService {
         return dataAccessFunctions.verifyPlayerData(data);
     }
 
-    public static gameList listGames(String token) throws DataAccessException {
+    public static gameList listGames(String token) {
         try {
             if (verifyToken(token)) {
                 return new gameList(dataAccessFunctions.getGamesList(), null);
@@ -61,18 +58,22 @@ public class gameService {
             }
         }
 
-    public static void joinGame(JoinData joinData, String token) {
-        if (verifyToken(token) && verifyData(joinData)) {
-            if (dataAccessFunctions.verifyGameID(joinData.gameID())) {
-                dataAccessFunctions.updateGame(joinData);
+    public static void joinGame(JoinData joinData, String token)throws DataAccessException{
+        if (verifyToken(token)) {
+            if(verifyData(joinData)) {
+                if (dataAccessFunctions.verifyGameID(joinData.gameID())) {
+                    dataAccessFunctions.updateGame(joinData, token);
+                }
+                else {
+                    throw new DataAccessException("Error: bad request");
+                }
             }
-//            else {
-//                throw new DataAccessException("Error: bad request");
-//            }
-//        }
-//        else {
-//            throw new DataAccessException("Error: bad request");
-//        }
+            else {
+                throw new DataAccessException("Error: bad request");
+            }
+        }
+        else {
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 }

@@ -42,8 +42,9 @@ public class dataAccessFunctions {
     }
 
     public static AuthData createAuthToken(String username) {
-        AuthData authToken = new AuthData(username, UUID.randomUUID().toString());
-        authTokens.put(username, authToken);
+        String authName = UUID.randomUUID().toString();
+        AuthData authToken = new AuthData(username, authName);
+        authTokens.put(authName, authToken);
         return authToken;
     }
 
@@ -72,8 +73,7 @@ public class dataAccessFunctions {
     }
 
     public static ArrayList<GameData> getGamesList() {
-        ArrayList<GameData> gameList = new ArrayList<>();
-        gameList.addAll(games.values());
+        ArrayList<GameData> gameList = new ArrayList<>(games.values());
         return gameList;
     }
 
@@ -92,7 +92,7 @@ public class dataAccessFunctions {
         return ((Objects.equals(data.playerColor(), "WHITE") || (Objects.equals(data.playerColor(), "BLACK") || data.playerColor()==null)));
     }
 
-    public static void updateGame(JoinData joinData){
+    public static void updateGame(JoinData joinData, String token) throws DataAccessException {
         int gameID = joinData.gameID();
         GameData gameData = games.get(gameID);
         String blackUser = gameData.blackUsername();
@@ -100,14 +100,27 @@ public class dataAccessFunctions {
         String gameName = gameData.gameName();
         ChessGame chessGame = gameData.game();
 
+        AuthData tokenInfo = authTokens.get(token);
+        String playerName = tokenInfo.username();
+
         if(Objects.equals(joinData.playerColor(), "WHITE")){
-            GameData updatedGame = new GameData(gameID, whiteUser, null, gameName, chessGame);
-            games.replace(gameID, updatedGame);
+            if (whiteUser==null){
+                GameData updatedGame = new GameData(gameID, playerName, blackUser, gameName, chessGame);
+                games.replace(gameID, updatedGame);
+            }
+            else{
+                throw new DataAccessException("Error: already taken");
+            }
         }
         else if (Objects.equals(joinData.playerColor(), "BLACK")){
-            GameData updatedGame = new GameData(gameID, null, blackUser, gameName, chessGame);
-            games.replace(gameID, updatedGame);
+            if (blackUser==null) {
+                GameData updatedGame = new GameData(gameID, whiteUser, playerName, gameName, chessGame);
+                games.replace(gameID, updatedGame);
+            }
+            else{
+                throw new DataAccessException("Error: already taken");
+            }
         }
-
+        // add code here for spectators
     }
 }
