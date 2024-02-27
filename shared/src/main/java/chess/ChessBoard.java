@@ -9,7 +9,7 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    static ChessPiece[][] places = new ChessPiece[8][8];
+    ChessPiece[][] places = new ChessPiece[8][8];
     public ChessBoard() {
 
     }
