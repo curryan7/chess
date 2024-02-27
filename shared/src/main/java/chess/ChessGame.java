@@ -23,10 +23,10 @@ public class ChessGame {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                ChessPiece originalPiece = board.Places[i][j];
+                ChessPiece originalPiece = board.places[i][j];
                 if (originalPiece != null) {
                     ChessPiece clonedPiece = new ChessPiece(originalPiece.getTeamColor(), originalPiece.getPieceType()); // Assuming ChessPiece has a copy constructor
-                    copyBoard.Places[i][j] = clonedPiece;
+                    copyBoard.places[i][j] = clonedPiece;
                 }
             }
         }
@@ -181,14 +181,14 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         for(int i = 0; i<8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board.Places[i][j] != null) {
-                    ChessPiece searchPiece = board.Places[i][j];
+                if (board.places[i][j] != null) {
+                    ChessPiece searchPiece = board.places[i][j];
                     if (searchPiece.getPieceType() == ChessPiece.PieceType.KING && searchPiece.getTeamColor() == teamColor) {
                         ChessPosition kingPosition = new ChessPosition(i+1, j+1);
                         for(int k = 0; k<8; k++){
                             for (int l = 0; l<8; l++){
-                                if (board.Places[k][l] != null){
-                                    ChessPiece questionPiece = board.Places[k][l];
+                                if (board.places[k][l] != null){
+                                    ChessPiece questionPiece = board.places[k][l];
                                     if (questionPiece.getTeamColor() != teamColor){
                                         ChessPosition enemy = new ChessPosition(k+1,l+1);
                                         Collection<ChessMove> list = board.getPiece(enemy).pieceMoves(board,enemy);
@@ -218,8 +218,8 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         for(int i = 0; i<8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board.Places[i][j] != null) {
-                    ChessPiece searchPiece = board.Places[i][j];
+                if (board.places[i][j] != null) {
+                    ChessPiece searchPiece = board.places[i][j];
                     if (searchPiece.getPieceType() == ChessPiece.PieceType.KING && searchPiece.getTeamColor() == teamColor) {
                         if (isInCheck(teamColor)){
                             ChessPosition kingPosition = new ChessPosition(i+1, j+1);
@@ -245,8 +245,8 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         for(int i = 0; i<8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board.Places[i][j] != null) {
-                    ChessPiece searchPiece = board.Places[i][j];
+                if (board.places[i][j] != null) {
+                    ChessPiece searchPiece = board.places[i][j];
                     if (searchPiece.getPieceType() == ChessPiece.PieceType.KING && searchPiece.getTeamColor() == teamColor) {
                         if (!isInCheck(teamColor)){
                             ChessPosition kingPosition = new ChessPosition(i+1, j+1);
