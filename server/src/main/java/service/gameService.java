@@ -1,41 +1,41 @@
 package service;
 
 import dataAccess.DataAccessException;
-import dataAccess.dataAccessFunctions;
+import dataAccess.DataAccessFunctions;
 import model.GameData;
 import model.JoinData;
-import model.gameCreationResult;
-import model.gameList;
+import model.GameCreationResult;
+import model.*;
 
 public class gameService {
     public static Boolean verifyToken(String token) {
-        return dataAccessFunctions.verifyAuthToken(token);
+        return DataAccessFunctions.verifyAuthToken(token);
     }
 
     public static Boolean verifyData(JoinData data){
-        return dataAccessFunctions.verifyPlayerData(data);
+        return DataAccessFunctions.verifyPlayerData(data);
     }
 
-    public static gameList listGames(String token) {
+    public static GameList listGames(String token) {
         try {
             if (verifyToken(token)) {
-                return new gameList(dataAccessFunctions.getGamesList(), null);
+                return new GameList(DataAccessFunctions.getGamesList(), null);
             }
             else {
                 throw new DataAccessException("Error: unauthorized");
             }
         }
         catch (DataAccessException e){
-            return new gameList(null, "Error: unauthorized");
+            return new GameList(null, "Error: unauthorized");
         }
     }
 
-    public static gameCreationResult createGame(String token, GameData gameData) {
+    public static GameCreationResult createGame(String token, GameData gameData) {
         try {
             if (gameData.gameName() != null) {
                 if (verifyToken(token)) {
-                    GameData gameStuff = dataAccessFunctions.createGame(gameData);
-                    return new gameCreationResult(gameStuff.gameID(), null);
+                    GameData gameStuff = DataAccessFunctions.createGame(gameData);
+                    return new GameCreationResult(gameStuff.gameID(), null);
                 }
                 else {
                     throw new DataAccessException("Error: unauthorized");
@@ -47,13 +47,13 @@ public class gameService {
         }
         catch (DataAccessException e) {
             if (e.getMessage().equals("Error: unauthorized")){
-                return new gameCreationResult(0, "Error: unauthorized");
+                return new GameCreationResult(0, "Error: unauthorized");
             }
             else if(e.getMessage().equals("Error: bad request")){
-                return new gameCreationResult(0,"Error: bad request");
+                return new GameCreationResult(0,"Error: bad request");
             }
             else{
-                return new gameCreationResult(0, "Error: description");
+                return new GameCreationResult(0, "Error: description");
             }
             }
         }
@@ -61,8 +61,8 @@ public class gameService {
     public static void joinGame(JoinData joinData, String token)throws DataAccessException{
         if (verifyToken(token)) {
             if(verifyData(joinData)) {
-                if (dataAccessFunctions.verifyGameID(joinData.gameID())) {
-                    dataAccessFunctions.updateGame(joinData, token);
+                if (DataAccessFunctions.verifyGameID(joinData.gameID())) {
+                    DataAccessFunctions.updateGame(joinData, token);
                 }
                 else {
                     throw new DataAccessException("Error: bad request");

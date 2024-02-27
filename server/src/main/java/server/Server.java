@@ -9,6 +9,7 @@ import service.clearService;
 import service.userService;
 import service.gameService;
 
+
 public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -55,7 +56,7 @@ public class Server {
         Gson gson = new Gson();
 
         UserData userData = gson.fromJson(req.body(), UserData.class);
-        registerResult authToken = userService.registerUser(userData);
+        RegisterResult authToken = userService.registerUser(userData);
         if(authToken.message()==null){
             res.status(200);
         }
@@ -72,7 +73,7 @@ public class Server {
     private Object login(Request req, Response res) {
         Gson gson = new Gson();
         UserData userData = gson.fromJson(req.body(), UserData.class);
-        loginResult authToken = userService.loginUser(userData);
+        LoginResult authToken = userService.loginUser(userData);
         if (authToken.message() == null) {
             res.status(200);
         }
@@ -92,11 +93,11 @@ public class Server {
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
             res.status(401);
-            res.body(gson.toJson(new noHeader("Error: Unauthorized")));
+            res.body(gson.toJson(new NoHeader("Error: Unauthorized")));
             return res.body();
         }
 
-        logoutResult logoutResponse = userService.logoutUser(authTokenHeader);
+        LogoutResult logoutResponse = userService.logoutUser(authTokenHeader);
 
         if (logoutResponse.message() == null){
             res.status(200);
@@ -114,24 +115,24 @@ public class Server {
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
             res.status(401);
-            res.body(gson.toJson(new noHeader("Error: Unauthorized")));
+            res.body(gson.toJson(new NoHeader("Error: Unauthorized")));
             return res.body();
         }
 
-            gameList GameList = gameService.listGames(authTokenHeader);
+            GameList gameList = gameService.listGames(authTokenHeader);
 
-        if (GameList.message()== null) {
+        if (gameList.message()== null) {
             res.status(200);
 
         }
-        else if(GameList.message().equals("Error: unauthorized")){
+        else if(gameList.message().equals("Error: unauthorized")){
             res.status(401);
         }
         else {
             res.status(500);
         }
 
-        return gson.toJson(GameList);
+        return gson.toJson(gameList);
     }
     private Object createGame(Request req, Response res) {
         Gson gson = new Gson();
@@ -140,18 +141,18 @@ public class Server {
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
             res.status(401);
-            res.body(gson.toJson(new noHeader("Error: Unauthorized")));
+            res.body(gson.toJson(new NoHeader("Error: Unauthorized")));
             return res.body();
         }
 
-        gameCreationResult result = gameService.createGame(authTokenHeader, gameData);
+        GameCreationResult result = gameService.createGame(authTokenHeader, gameData);
 
         if (result.message()==null){
             res.status(200);
             res.body(gson.toJson(result));
         }
         else{
-            gameCreationFailure failedCreation = new gameCreationFailure(null,result.message());
+            GameCreationFailure failedCreation = new GameCreationFailure(null,result.message());
             if(result.message().equals("Error: unauthorized")){
                 res.status(401);
             }
@@ -173,7 +174,7 @@ public class Server {
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
             res.status(401);
-            res.body(gson.toJson(new noHeader("Error: Unauthorized")));
+            res.body(gson.toJson(new NoHeader("Error: Unauthorized")));
             return res.body();
         }
 

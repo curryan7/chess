@@ -3,18 +3,18 @@ package service;
 import dataAccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
-import dataAccess.dataAccessFunctions;
-import model.loginResult;
-import model.logoutResult;
-import model.registerResult;
+import dataAccess.DataAccessFunctions;
+import model.LoginResult;
+import model.LogoutResult;
+import model.RegisterResult;
 
 public class userService {
     public static Object getUser(UserData user) throws DataAccessException{
         String username = user.username();
-        return dataAccessFunctions.grabUser(username);
+        return DataAccessFunctions.grabUser(username);
     }
     public static AuthData createUser(UserData user) throws DataAccessException{
-        if(dataAccessFunctions.createUser(user)){
+        if(DataAccessFunctions.createUser(user)){
             return createAuth(user);
         }
         else{
@@ -23,17 +23,17 @@ public class userService {
     }
     public static AuthData createAuth(UserData user) throws DataAccessException{
         String username = user.username();
-        return dataAccessFunctions.createAuthToken(username);
+        return DataAccessFunctions.createAuthToken(username);
     }
     public static Boolean verifyData(UserData user) throws DataAccessException {
         return user.username() != null && user.password() != null && user.email() != null;
     }
-    public static registerResult registerUser(UserData user) {
+    public static RegisterResult registerUser(UserData user) {
         try {
             if (verifyData(user)) {
                 if (getUser(user) == null) {
                     AuthData tokenData = createUser(user);
-                    return new registerResult(tokenData.username(), tokenData.authToken(), null);
+                    return new RegisterResult(tokenData.username(), tokenData.authToken(), null);
                 } else {
                     throw new DataAccessException("Error: already taken");
                 }
@@ -44,24 +44,24 @@ public class userService {
         }
         catch (DataAccessException e){
             if (e.getMessage().equals("Error: bad request")){
-                return new registerResult(null, null, "Error: bad request");
+                return new RegisterResult(null, null, "Error: bad request");
             }
             else if (e.getMessage().equals("Error: already taken")){
-                return new registerResult(null, null, "Error: already taken");
+                return new RegisterResult(null, null, "Error: already taken");
             }
-            return new registerResult(null, null, "Error: description");
+            return new RegisterResult(null, null, "Error: description");
         }
     }
-    public static loginResult loginUser(UserData user){
+    public static LoginResult loginUser(UserData user){
         String username = user.username();
         String password = user.password();
 
         try {
             if(username != null || password != null){
                 if (getUser(user) != null) {
-                    String existingPassword = dataAccessFunctions.grabPassword(username, password);
+                    String existingPassword = DataAccessFunctions.grabPassword(username, password);
                     if (existingPassword.equals(password)) {
-                        return new loginResult(username, createAuth(user).authToken(), null);
+                        return new LoginResult(username, createAuth(user).authToken(), null);
                     }
                     else{
                         throw new DataAccessException("Error: unauthorized");
@@ -77,27 +77,27 @@ public class userService {
         }
         catch(DataAccessException e){
             if(e.getMessage().equals("Error: unauthorized")) {
-                return new loginResult(null, null, "Error: unauthorized");
+                return new LoginResult(null, null, "Error: unauthorized");
             }
             else if(e.getMessage().equals("Error: bad request")){
-                return new loginResult(null, null, "Error: bad request");
+                return new LoginResult(null, null, "Error: bad request");
             }
             else {
-                return new loginResult(null,null,"Error: description");
+                return new LoginResult(null,null,"Error: description");
             }
         }
     }
-    public static logoutResult logoutUser(String authToken) {
+    public static LogoutResult logoutUser(String authToken) {
         try {
-            if (dataAccessFunctions.verifyAuthToken(authToken)) {
-                dataAccessFunctions.deleteAuthToken(authToken);
-                return new logoutResult(null);
+            if (DataAccessFunctions.verifyAuthToken(authToken)) {
+                DataAccessFunctions.deleteAuthToken(authToken);
+                return new LogoutResult(null);
             } else {
                 throw new DataAccessException("Error: unauthorized");
             }
         }
         catch(DataAccessException e){
-            return new logoutResult("Error: unauthorized");
+            return new LogoutResult("Error: unauthorized");
         }
     }
 }

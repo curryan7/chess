@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.*;
 import java.util.ArrayList;
 
-public class dataAccessFunctions {
+public class DataAccessFunctions {
     static Random rand = new Random();
     private static Map<String, UserData> users = new HashMap<>();
     private static Map<String, AuthData> authTokens = new HashMap<>();

@@ -1,12 +1,10 @@
 package service;
 
 import dataAccess.DataAccessException;
-import dataAccess.dataAccessFunctions;
-
-import javax.xml.crypto.Data;
+import dataAccess.DataAccessFunctions;
 
 public class clearService {
     public static void clearOut() throws DataAccessException {
-            dataAccessFunctions.clearoff();
+            DataAccessFunctions.clearoff();
     }
 }

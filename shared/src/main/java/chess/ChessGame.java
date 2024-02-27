@@ -1,6 +1,5 @@
 package chess;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 
@@ -19,7 +18,7 @@ public class ChessGame {
 
     }
 
-    public ChessBoard DeepCopy(ChessBoard board) {
+    public ChessBoard deepCopy(ChessBoard board) {
         ChessBoard copyBoard = new ChessBoard();
 
         for (int i = 0; i < 8; i++) {
@@ -58,7 +57,7 @@ public class ChessGame {
         WHITE,
         BLACK
     }
-    public void ApplyMove(ChessMove move, ChessBoard testBoard){
+    public void applyMove(ChessMove move, ChessBoard testBoard){
         // we have our chess pieces and chess positions that are relevant to the function
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
@@ -68,23 +67,6 @@ public class ChessGame {
         testBoard.addPiece(endPosition, startPiece);
         testBoard.addPiece(startPosition, null);
     }
-
-//    public void unApplyMove (ChessMove move, ChessBoard testBoard){
-//        ChessPosition startPosition = move.getStartPosition();
-//        ChessPosition endPosition = move.getEndPosition();
-//        ChessPiece startPiece = board.getPiece(endPosition);
-//        ChessPiece endPiece = board.getPiece(startPosition);
-//
-//        testBoard.addPiece(startPosition, startPiece);
-//        testBoard.addPiece(endPosition, endPiece);
-//
-////        testBoard.addPiece(startPosition, endPiece);
-////        testBoard.addPiece(endPosition, startPiece);
-//
-//    }
-
-
-
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -96,15 +78,15 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> list = board.getPiece(startPosition).pieceMoves(board, startPosition);
         Collection<ChessMove> invalidList = new HashSet<ChessMove>();
-        ChessBoard originalBoard = DeepCopy(board);
+        ChessBoard originalBoard = deepCopy(board);
         ChessPiece startPiece = board.getPiece(startPosition);
         ChessGame.TeamColor originalColor = getTeamTurn();
         ChessGame.TeamColor testColor = startPiece.getTeamColor();
         setTeamTurn(testColor);
 
         for (ChessMove move : list) {
-           ChessBoard testBoard = DeepCopy(board);
-           ApplyMove(move, testBoard);
+           ChessBoard testBoard = deepCopy(board);
+           applyMove(move, testBoard);
            setBoard(testBoard);
            setTeamTurn(testColor);
            
