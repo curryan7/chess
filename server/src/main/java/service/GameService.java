@@ -1,25 +1,27 @@
 package service;
 
 import dataAccess.DataAccessException;
-import dataAccess.DataAccessFunctions;
+import dataAccess.MySqlDataAccess;
 import model.GameData;
 import model.JoinData;
 import model.GameCreationResult;
 import model.*;
 
+import java.sql.SQLException;
+
 public class GameService {
     public static Boolean verifyToken(String token) {
-        return DataAccessFunctions.verifyAuthToken(token);
+        return MySqlDataAccess.verifyAuthToken(token);
     }
 
     public static Boolean verifyData(JoinData data){
-        return DataAccessFunctions.verifyPlayerData(data);
+        return MySqlDataAccess.verifyPlayerData(data);
     }
 
     public static GameList listGames(String token) {
         try {
             if (verifyToken(token)) {
-                return new GameList(DataAccessFunctions.getGamesList(), null);
+                return new GameList(MySqlDataAccess.getGamesList(), null);
             }
             else {
                 throw new DataAccessException("Error: unauthorized");
@@ -34,7 +36,7 @@ public class GameService {
         try {
             if (gameData.gameName() != null) {
                 if (verifyToken(token)) {
-                    GameData gameStuff = DataAccessFunctions.createGame(gameData);
+                    GameData gameStuff = MySqlDataAccess.createGame(gameData);
                     return new GameCreationResult(gameStuff.gameID(), null);
                 }
                 else {
@@ -58,11 +60,11 @@ public class GameService {
             }
         }
 
-    public static void joinGame(JoinData joinData, String token)throws DataAccessException{
+    public static void joinGame(JoinData joinData, String token) throws DataAccessException, SQLException {
         if (verifyToken(token)) {
             if(verifyData(joinData)) {
-                if (DataAccessFunctions.verifyGameID(joinData.gameID())) {
-                    DataAccessFunctions.updateGame(joinData, token);
+                if (MySqlDataAccess.verifyGameID(joinData.gameID())) {
+                    MySqlDataAccess.updateGame(joinData, token);
                 }
                 else {
                     throw new DataAccessException("Error: bad request");

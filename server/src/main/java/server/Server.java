@@ -201,6 +201,8 @@ public class Server {
                 res.status(500);
                 return gson.toJson(new SuccessJoin("Error: description"));
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     public void stop() {
