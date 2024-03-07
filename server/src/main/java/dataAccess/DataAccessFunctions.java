@@ -22,11 +22,11 @@ public class DataAccessFunctions {
         games.clear();
     }
 
-    public static Object grabUser(String username) throws DataAccessException {
+    public static UserData grabUser(String username) throws DataAccessException {
         return users.get(username);
     }
 
-    public static String grabPassword(String username, String password) throws DataAccessException {
+    public static String grabPassword(String username) throws DataAccessException {
         UserData userinfo = users.get(username);
         return userinfo.password();
     }

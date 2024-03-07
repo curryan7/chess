@@ -9,6 +9,8 @@ import service.ClearService;
 import service.UserService;
 import service.GameService;
 
+import java.sql.SQLException;
+
 
 public class Server {
     public int run(int desiredPort) {
@@ -37,10 +39,6 @@ public class Server {
     }
 
     private Object clear(Request req, Response res) {
-        //http request, deserialize, and send to service
-        // receive response back from service
-        // serialize the response
-        // send it back to request
         Gson gson = new Gson();
         try {
             ClearService.clearOut();
@@ -50,6 +48,8 @@ public class Server {
             res.status(500);
             res.body(gson.toJson(e.getMessage()));
             return res.body();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     private Object register(Request req, Response res) {

@@ -1,12 +1,8 @@
 package service;
 
-import dataAccess.DataAccessException;
-import model.AuthData;
-import model.UserData;
-import dataAccess.DataAccessFunctions;
-import model.LoginResult;
-import model.LogoutResult;
-import model.RegisterResult;
+import dataAccess.*;
+import model.*;
+
 
 public class UserService {
     public static Object getUser(UserData user) throws DataAccessException{
@@ -59,7 +55,7 @@ public class UserService {
         try {
             if(username != null || password != null){
                 if (getUser(user) != null) {
-                    String existingPassword = DataAccessFunctions.grabPassword(username, password);
+                    String existingPassword = DataAccessFunctions.grabPassword(username);
                     if (existingPassword.equals(password)) {
                         return new LoginResult(username, createAuth(user).authToken(), null);
                     }
