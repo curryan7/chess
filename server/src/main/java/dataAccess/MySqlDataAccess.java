@@ -110,11 +110,11 @@ public class MySqlDataAccess {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
-    public static AuthData createAuthToken(String username) {
+    public static AuthData createAuthToken(String username) throws DataAccessException {
         String authName = UUID.randomUUID().toString();
         try (var conn = DatabaseManager.getConnection()) {
             var createAuthStatement = """
@@ -128,7 +128,7 @@ public class MySqlDataAccess {
                 return new AuthData(username, authName);
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error: bad request");
         }
     }
 
@@ -149,7 +149,7 @@ public class MySqlDataAccess {
 
             }
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new DataAccessException("Error: bad request");
         }
     }
 
@@ -168,7 +168,7 @@ public class MySqlDataAccess {
         }
     }
 
-    public static void deleteAuthToken(String token) {
+    public static void deleteAuthToken(String token) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var deleteAuthStatement = """
                             DELETE FROM Auths WHERE authToken=?;
@@ -178,11 +178,11 @@ public class MySqlDataAccess {
                 deleteStatement.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException();
+            throw new DataAccessException("Error: bad request");
         }
     }
 
-    public static ArrayList<GameData> getGamesList() {
+    public static ArrayList<GameData> getGamesList() throws DataAccessException {
         ArrayList<GameData> gameList = new ArrayList<>();
 
         try (var conn = DatabaseManager.getConnection()) {
@@ -204,14 +204,12 @@ public class MySqlDataAccess {
                 }
                 return gameList;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | DataAccessException e) {
+            throw new DataAccessException("Error: bad request");
         }
     }
 
-    public static GameData createGame(GameData gameData) {
+    public static GameData createGame(GameData gameData) throws DataAccessException {
         int gameID = rand.nextInt(500);
         GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
         Gson gson = new Gson();
@@ -231,7 +229,7 @@ public class MySqlDataAccess {
                 return finalGameData;
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error: bad request");
         }
     }
 
@@ -246,7 +244,7 @@ public class MySqlDataAccess {
                 return authResult.next();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error: bad request");
         }
     }
 
