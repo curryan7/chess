@@ -1,6 +1,7 @@
 package server;
 
 import dataAccess.DataAccessException;
+import dataAccess.MySqlDataAccess;
 import model.*;
 import spark.*;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+
 
         Spark.staticFiles.location("web");
 
@@ -38,8 +40,9 @@ public class Server {
         return Spark.port();
     }
 
-    private Object clear(Request req, Response res) {
+    private Object clear(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
         try {
             ClearService.clearOut();
             res.status(200);
@@ -52,8 +55,9 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
-    private Object register(Request req, Response res) {
+    private Object register(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
 
         UserData userData = gson.fromJson(req.body(), UserData.class);
         RegisterResult authToken = UserService.registerUser(userData);
@@ -70,8 +74,9 @@ public class Server {
         res.body(gson.toJson(authToken));
         return res.body();
     }
-    private Object login(Request req, Response res) {
+    private Object login(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
         UserData userData = gson.fromJson(req.body(), UserData.class);
         LoginResult authToken = UserService.loginUser(userData);
         if (authToken.message() == null) {
@@ -87,7 +92,8 @@ public class Server {
         res.body(gson.toJson(authToken));
         return res.body();
     }
-    private Object logout(Request req, Response res) {
+    private Object logout(Request req, Response res) throws SQLException, DataAccessException {
+        MySqlDataAccess.configureSQLAccess();
         Gson gson = new Gson();
 
         String authTokenHeader = req.headers("authorization");
@@ -109,8 +115,9 @@ public class Server {
         res.body(gson.toJson(logoutResponse));
         return res.body();
     }
-    private Object listGames(Request req, Response res) {
+    private Object listGames(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
 
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
@@ -134,8 +141,9 @@ public class Server {
 
         return gson.toJson(gameList);
     }
-    private Object createGame(Request req, Response res) {
+    private Object createGame(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
         GameData gameData = gson.fromJson(req.body(),GameData.class);
 
         String authTokenHeader = req.headers("authorization");
@@ -167,8 +175,9 @@ public class Server {
         return res.body();
 
     }
-    private Object joinGame(Request req, Response res) {
+    private Object joinGame(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
+        MySqlDataAccess.configureSQLAccess();
         JoinData joinData = gson.fromJson(req.body(),JoinData.class);
 
         String authTokenHeader = req.headers("authorization");

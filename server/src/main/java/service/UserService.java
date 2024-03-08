@@ -11,7 +11,6 @@ public class UserService {
 
     public static Object getUser(UserData user) throws DataAccessException, SQLException {
         String username = user.username();
-        MySqlDataAccess.configureSQLAccess();
         return MySqlDataAccess.grabUser(username);
     }
     public static AuthData createUser(UserData user) throws DataAccessException{
