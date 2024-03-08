@@ -14,7 +14,7 @@ public class UserService {
         return MySqlDataAccess.grabUser(username);
     }
     public static AuthData createUser(UserData user) throws DataAccessException{
-        if(MySqlDataAccess.createUser(user)){
+        if(Boolean.TRUE.equals(MySqlDataAccess.createUser(user))){
             return createAuth(user);
         }
         else{

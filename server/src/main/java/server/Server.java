@@ -42,7 +42,7 @@ public class Server {
 
     private Object clear(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
         try {
             ClearService.clearOut();
             res.status(200);
@@ -57,7 +57,7 @@ public class Server {
     }
     private Object register(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
 
         UserData userData = gson.fromJson(req.body(), UserData.class);
         RegisterResult authToken = UserService.registerUser(userData);
@@ -76,7 +76,7 @@ public class Server {
     }
     private Object login(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
         UserData userData = gson.fromJson(req.body(), UserData.class);
         LoginResult authToken = UserService.loginUser(userData);
         if (authToken.message() == null) {
@@ -93,7 +93,7 @@ public class Server {
         return res.body();
     }
     private Object logout(Request req, Response res) throws SQLException, DataAccessException {
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
         Gson gson = new Gson();
 
         String authTokenHeader = req.headers("authorization");
@@ -117,7 +117,7 @@ public class Server {
     }
     private Object listGames(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
 
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
@@ -143,7 +143,7 @@ public class Server {
     }
     private Object createGame(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
         GameData gameData = gson.fromJson(req.body(),GameData.class);
 
         String authTokenHeader = req.headers("authorization");
@@ -177,7 +177,7 @@ public class Server {
     }
     private Object joinGame(Request req, Response res) throws SQLException, DataAccessException {
         Gson gson = new Gson();
-        MySqlDataAccess.configureSQLAccess();
+        MySqlDataAccess server = new MySqlDataAccess();
         JoinData joinData = gson.fromJson(req.body(),JoinData.class);
 
         String authTokenHeader = req.headers("authorization");

@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class MySqlDataAccess {
     static Random rand = new Random();
-    public static void configureSQLAccess() throws DataAccessException, SQLException {
+    public MySqlDataAccess() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
 
@@ -124,7 +124,7 @@ public class MySqlDataAccess {
                 authInsertStatement.setString(1, username);
                 authInsertStatement.setString(2, authName);
 
-                var result = authInsertStatement.executeUpdate();
+                authInsertStatement.executeUpdate();
                 return new AuthData(username, authName);
             }
         } catch (SQLException | DataAccessException e) {
