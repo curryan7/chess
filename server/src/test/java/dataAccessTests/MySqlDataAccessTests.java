@@ -12,12 +12,18 @@ public class MySqlDataAccessTests {
         void configureSQLAccess() {
         }
 
+
         @Test
         void clearoff() {
         }
 
+
         @Test
         void grabUser() {
+        }
+
+        @Test
+        void negGrabUser() {
         }
 
         @Test
@@ -25,7 +31,15 @@ public class MySqlDataAccessTests {
         }
 
         @Test
+        void negcreateUser() {
+        }
+
+        @Test
         void createAuthToken() {
+        }
+
+        @Test
+        void negcreateAuthToken() {
         }
 
         @Test
@@ -33,7 +47,15 @@ public class MySqlDataAccessTests {
         }
 
         @Test
+        void neggrabPassword() {
+        }
+
+        @Test
         void verifyAuthToken() {
+        }
+
+        @Test
+        void negverifyAuthToken() {
         }
 
         @Test
@@ -41,7 +63,15 @@ public class MySqlDataAccessTests {
         }
 
         @Test
+        void negdeleteAuthToken() {
+        }
+
+        @Test
         void getGamesList() {
+        }
+
+        @Test
+        void neggetGamesList() {
         }
 
         @Test
@@ -49,7 +79,15 @@ public class MySqlDataAccessTests {
         }
 
         @Test
+        void negcreateGame() {
+        }
+
+        @Test
         void verifyGameID() {
+        }
+
+        @Test
+        void negverifyGameID() {
         }
 
         @Test
@@ -57,7 +95,15 @@ public class MySqlDataAccessTests {
         }
 
         @Test
+        void negverifyPlayerData() {
+        }
+
+        @Test
         void updateGame() {
+        }
+
+        @Test
+        void negupdateGame() {
         }
     }
 }
