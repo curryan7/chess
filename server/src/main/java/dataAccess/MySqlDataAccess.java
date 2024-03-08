@@ -67,10 +67,6 @@ public class MySqlDataAccess {
             try (var updateAuthsStatement = conn.prepareStatement(clearAuthsStatement)){
                 updateAuthsStatement.executeUpdate();
             }
-
-            catch(RuntimeException e){
-                throw new RuntimeException();
-            }
         }
     }
 
@@ -91,8 +87,6 @@ public class MySqlDataAccess {
                         return null;
                     }
                 }
-            } catch (SQLException e) {
-                return null;
             }
         }
     }
@@ -117,7 +111,6 @@ public class MySqlDataAccess {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-
         }
     }
 
@@ -147,14 +140,17 @@ public class MySqlDataAccess {
             try (var grabPasswordStatement = conn.prepareStatement(createAuthStatement)) {
                 grabPasswordStatement.setString(1, username);
                 ResultSet passwordResult = grabPasswordStatement.executeQuery();
-                if (passwordResult.next()) {
+                if(passwordResult.next()){
                     return passwordResult.getString("password");
                 }
+                else{
+                    throw new DataAccessException("Error: bad request");
+                }
+
             }
         } catch (SQLException e) {
             throw new RuntimeException();
         }
-        return null;
     }
 
     public static Boolean verifyAuthToken(String token) {
@@ -165,14 +161,11 @@ public class MySqlDataAccess {
             try (var grabAStatement = conn.prepareStatement(grabAuthStatement)) {
                 grabAStatement.setString(1, token);
                 ResultSet authResult = grabAStatement.executeQuery();
-                if (authResult.next()) {
-                    return true;
-                }
+                return authResult.next();
             }
         } catch (SQLException | DataAccessException e) {
             return false;
         }
-        return null;
     }
 
     public static void deleteAuthToken(String token) {
@@ -184,10 +177,8 @@ public class MySqlDataAccess {
                 deleteStatement.setString(1, token);
                 deleteStatement.executeUpdate();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -237,7 +228,6 @@ public class MySqlDataAccess {
                 GameInsertStatement.setString(5, gameString);
 
                 GameInsertStatement.executeUpdate();
-
                 return finalGameData;
             }
         } catch (SQLException | DataAccessException e) {
@@ -285,6 +275,7 @@ public class MySqlDataAccess {
                         ResultSet authResult = grabAuthStatement.executeQuery();
                         if (authResult.next()) {
                             String username = authResult.getString("username");
+
                             if (Objects.equals(joinData.playerColor(), "WHITE")) {
                                 if (whiteUser == null) {
                                     try (var preparedStatement = conn.prepareStatement(
@@ -294,15 +285,22 @@ public class MySqlDataAccess {
                                         preparedStatement.executeUpdate();
                                     }
                                 }
-                            } else if (blackUser == null) {
-                                try (var preparedStatement = conn.prepareStatement(
-                                        "UPDATE Games SET blackUserName = ? WHERE GameID = ?")) {
-                                    preparedStatement.setString(1, username);
-                                    preparedStatement.setInt(2, gameID);
-                                    preparedStatement.executeUpdate();
+                                else{
+                                    throw new DataAccessException("Error: already taken");
+                                }
+                            } else if (Objects.equals(joinData.playerColor(), "BLACK")) {
+                                if (blackUser == null) {
+                                    try (var preparedStatement = conn.prepareStatement(
+                                            "UPDATE Games SET blackUserName = ? WHERE GameID = ?")) {
+                                        preparedStatement.setString(1, username);
+                                        preparedStatement.setInt(2, gameID);
+                                        preparedStatement.executeUpdate();
+                                    }
+                                }
+                                else {
+                                    throw new DataAccessException("Error: already taken");
                                 }
                             }
-
                         }
 
                     }
