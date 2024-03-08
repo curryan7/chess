@@ -73,7 +73,7 @@ public class MySqlDataAccess {
     public static UserData grabUser(String username) throws DataAccessException, SQLException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = """
-                    SELECT username,password,email FROM chess.Users WHERE username=?
+                    SELECT username,password,email FROM Users WHERE username=?
                     """;
             try (var grabUserStatement = conn.prepareStatement(statement)) {
                 grabUserStatement.setString(1, username);
@@ -98,7 +98,7 @@ public class MySqlDataAccess {
 
         try (var conn = DatabaseManager.getConnection()) {
             var createUserStatement = """
-                            INSERT INTO chess.Users (username, password, email) VALUES (?, ?, ?)
+                            INSERT INTO Users (username, password, email) VALUES (?, ?, ?)
                     """;
             try (var UInsertStatement = conn.prepareStatement(createUserStatement, Statement.RETURN_GENERATED_KEYS)) {
                 UInsertStatement.setString(1, uname);
@@ -216,7 +216,7 @@ public class MySqlDataAccess {
         String gameString = gson.toJson(finalGameData.game());
         try (var conn = DatabaseManager.getConnection()) {
             var createUserStatement = """
-                            INSERT INTO chess.Games (GameID, whiteUserName, blackUserName, gameName, game) VALUES (?, ?, ?, ?, ?)
+                            INSERT INTO Games (GameID, whiteUserName, blackUserName, gameName, game) VALUES (?, ?, ?, ?, ?)
                     """;
             try (var GameInsertStatement = conn.prepareStatement(createUserStatement)) {
                 GameInsertStatement.setInt(1, gameID);
