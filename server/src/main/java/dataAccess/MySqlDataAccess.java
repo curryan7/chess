@@ -5,10 +5,10 @@ import model.*;
 import java.util.*;
 import java.sql.*;
 
-import static dataAccess.DataAccessFunctions.rand;
 
 
 public class MySqlDataAccess {
+    static Random rand = new Random();
     public static void configureSQLAccess() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
