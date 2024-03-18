@@ -1,24 +1,29 @@
 package ui;
 
-import java.awt.print.PrinterAbortException;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static ui.EscapeSequences.*;
 
 public class ChessDesign {
-    private static final int BOARD_SIZE_IN_CHARS = 31;
     private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_CHARS = 3;
+    private final ChessGame game;
+
+    public ChessDesign(ChessGame game) {
+        this.game = game;
+    }
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        
+
         drawThemHorizontalAxis(out, 2);
-        drawChessBoard(out,2);
+        drawChessBoard(this.game, out,2);
         drawThemHorizontalAxis(out, 2);
 
     }
@@ -45,12 +50,21 @@ public class ChessDesign {
         printHeaderText(out, headerText);
     }
 
-    private static void drawChessBoard(PrintStream out, int orientation) {
+    private static void readGame (ChessGame game){
+        ChessBoard board = game.getBoard();
+        ChessGame.TeamColor currentColor = game.getTeamTurn();
+
+        if (currentColor == ChessGame.TeamColor.BLACK){
+
+        }
+        else if (currentColor == ChessGame.TeamColor.WHITE){
+
+        }
+    }
+
+    private static void drawChessBoard(PrintStream out, int orientation, ChessGame game) {
         for (int boardRow = 0; boardRow <= 7; ++boardRow) {
             for (int boardCol = 0; boardCol <= 9; ++boardCol) {
-                if (orientation == 1){
-
-                }
                     if (boardCol == 0 || boardCol == 9) {
                         if (orientation == 1){
                             switch(boardRow){
@@ -112,10 +126,98 @@ public class ChessDesign {
 
                 else if ((boardRow + boardCol) % 2 == 0) {
                     setWhite(out);
-                    out.print(EMPTY);
+                    switch (getPieceColor(game, boardRow, boardCol)){
+                        case WHITE:
+                            switch(getSquarePiece(game, boardRow, boardCol)){
+                                case BISHOP:
+                                    out.print(WHITE_BISHOP);
+                                    break;
+                                case ROOK:
+                                    out.print(WHITE_ROOK);
+                                    break;
+                                case KNIGHT:
+                                    out.print(WHITE_KNIGHT);
+                                    break;
+                                case KING:
+                                    out.print(WHITE_KING);
+                                    break;
+                                case QUEEN:
+                                    out.print(WHITE_QUEEN);
+                                    break;
+                                case PAWN:
+                                    out.print(WHITE_PAWN);
+                                    break;
+                            }
+                        case BLACK:
+                            switch(getSquarePiece(game, boardRow, boardCol)){
+                                case BISHOP:
+                                    out.print(BLACK_BISHOP);
+                                    break;
+                                case ROOK:
+                                    out.print(BLACK_ROOK);
+                                    break;
+                                case KNIGHT:
+                                    out.print(BLACK_KNIGHT);
+                                    break;
+                                case KING:
+                                    out.print(BLACK_KING);
+                                    break;
+                                case QUEEN:
+                                    out.print(BLACK_QUEEN);
+                                    break;
+                                case PAWN:
+                                    out.print(BLACK_PAWN);
+                                    break;
+                            }
+                    }
+                    out.print("   ");
                 } else {
                     setBlack(out);
-                    out.print(EMPTY);
+                        switch (getPieceColor(game, boardRow, boardCol)){
+                            case WHITE:
+                                switch(getSquarePiece(game, boardRow, boardCol)){
+                                    case BISHOP:
+                                        out.print(WHITE_BISHOP);
+                                        break;
+                                    case ROOK:
+                                        out.print(WHITE_ROOK);
+                                        break;
+                                    case KNIGHT:
+                                        out.print(WHITE_KNIGHT);
+                                        break;
+                                    case KING:
+                                        out.print(WHITE_KING);
+                                        break;
+                                    case QUEEN:
+                                        out.print(WHITE_QUEEN);
+                                        break;
+                                    case PAWN:
+                                        out.print(WHITE_PAWN);
+                                        break;
+                                }
+                            case BLACK:
+                                switch(getSquarePiece(game, boardRow, boardCol)){
+                                    case BISHOP:
+                                        out.print(BLACK_BISHOP);
+                                        break;
+                                    case ROOK:
+                                        out.print(BLACK_ROOK);
+                                        break;
+                                    case KNIGHT:
+                                        out.print(BLACK_KNIGHT);
+                                        break;
+                                    case KING:
+                                        out.print(BLACK_KING);
+                                        break;
+                                    case QUEEN:
+                                        out.print(BLACK_QUEEN);
+                                        break;
+                                    case PAWN:
+                                        out.print(BLACK_PAWN);
+                                        break;
+                                }
+                        }
+                    out.print("   ");
                 }
 
                 out.print(RESET_BG_COLOR);
@@ -124,6 +226,15 @@ public class ChessDesign {
         }
     }
 
+    private static ChessGame.TeamColor getPieceColor(ChessGame game, int row, int col){
+        ChessBoard board = game.getBoard();
+        return board.getPiece(new ChessPosition(row, col)).getTeamColor();
+    }
+
+    private static ChessPiece.PieceType getSquarePiece(ChessGame game, int row, int col){
+        ChessBoard board = game.getBoard();
+        return board.getPiece(new ChessPosition(row, col)).getPieceType();
+    }
     private static void printHeaderText(PrintStream out, String coordinate) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
@@ -138,27 +249,12 @@ public class ChessDesign {
 
     private static void setBlack(PrintStream out) {
         out.print((SET_BG_COLOR_BLACK));
-        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void setWhite(PrintStream out){
         out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void setGray(PrintStream out){
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_LIGHT_GREY);
-    }
-
-    private static void printPlayer(PrintStream out, String player) {
-        out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
-
-        out.print(player);
-
-        setWhite(out);
     }
-
 
 }
