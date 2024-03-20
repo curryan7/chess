@@ -12,19 +12,26 @@ import static ui.EscapeSequences.*;
 
 public class ChessDesign {
     private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private final ChessGame game;
+    static ChessGame game;
 
-    public ChessDesign(ChessGame game) {
-        this.game = game;
+    public ChessDesign() {
     }
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
         out.print(ERASE_SCREEN);
 
+        drawThemHorizontalAxis(out,1);
+        drawChessBoard(out, 1, game);
+        drawThemHorizontalAxis(out, 1);
+
+
         drawThemHorizontalAxis(out, 2);
-        drawChessBoard(this.game, out,2);
+        drawChessBoard(out,2, game);
         drawThemHorizontalAxis(out, 2);
+
+
 
     }
 
@@ -48,18 +55,6 @@ public class ChessDesign {
 
     private static void drawHorizontalAxis(PrintStream out, String headerText){
         printHeaderText(out, headerText);
-    }
-
-    private static void readGame (ChessGame game){
-        ChessBoard board = game.getBoard();
-        ChessGame.TeamColor currentColor = game.getTeamTurn();
-
-        if (currentColor == ChessGame.TeamColor.BLACK){
-
-        }
-        else if (currentColor == ChessGame.TeamColor.WHITE){
-
-        }
     }
 
     private static void drawChessBoard(PrintStream out, int orientation, ChessGame game) {
