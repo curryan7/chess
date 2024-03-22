@@ -26,7 +26,15 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void lregister() {
+    }
+
+    @Test
     void login() {
+    }
+
+    @Test
+    void dlogin() {
     }
 
     @Test
@@ -34,7 +42,15 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void flogout() {
+    }
+
+    @Test
     void listgames() {
+    }
+
+    @Test
+    void flistgames() {
     }
 
     @Test
@@ -42,7 +58,15 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void fjoinGame() {
+    }
+
+    @Test
     void createGame() {
+    }
+
+    @Test
+    void fcreateGame() {
     }
 
 }
