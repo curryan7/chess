@@ -13,42 +13,41 @@ public class ServerFacade {
     }
 
     public static RegisterResult register(UserData req) throws ResponseException {
-        System.out.println(serverURL);
         var path = "/user";
-        return makeRequest("POST", path, req, RegisterResult.class);
+        return makeRequest("POST", path, req, RegisterResult.class, false);
     }
 
     public static LoginResult login(UserData req) throws ResponseException {
         var path = "/session";
-        return makeRequest("POST", path, req, LoginResult.class);
+        return makeRequest("POST", path, req, LoginResult.class, false);
     }
 
     public static void logout(String... params) throws ResponseException {
         var path = "/session";
-        makeRequest("DELETE", path, null, LogoutResult.class);
+        makeRequest("DELETE", path, null, LogoutResult.class, true);
     }
 
     public static GameList listgames(String... params) throws ResponseException {
         var path = "/game";
-        return makeRequest("GET", path, null, GameList.class);
+        return makeRequest("GET", path, null, GameList.class, true);
     }
 
     public static SuccessJoin joinGame(JoinData req) throws ResponseException {
         var path = "/game";
-        return makeRequest("PUT", path, req, SuccessJoin.class);
+        return makeRequest("PUT", path, req, SuccessJoin.class, true);
     }
 
     public static GameCreationResult createGame(GameData req) throws ResponseException {
         var path = "/game";
-        return makeRequest("POST", path, req, GameCreationResult.class);
+        return makeRequest("POST", path, req, GameCreationResult.class, true);
     }
 
-    private static <T> T makeRequest(String method, String path, Object req, Class<T> responseClass) throws ResponseException {
+    private static <T> T makeRequest(String method, String path, Object req, Class<T> responseClass, Boolean needToken) throws ResponseException {
         try{
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
-            if (ChessClient.authToken!= null){
+            if (needToken){
                 http.addRequestProperty("authorization", ChessClient.authToken);
             }
 

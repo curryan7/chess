@@ -46,8 +46,8 @@ public class Repl {
                 - logout
                 - creategame <gamename>
                 - listgames 
-                - joingame <playercolor:WHITE or BLACK> <gameID>
-                - joinobserver <type "."> <gameID> 
+                - joingame <playercolor:WHITE or BLACK> <Game Number>
+                - joinobserver <type "."> <Game Number> 
                 """;
     }
 

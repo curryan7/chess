@@ -16,9 +16,9 @@ public class PostLoginUI {
     public static UIState state = PreLoginUI.state;
     public static String logout(String... params) throws ResponseException {
         if(params.length==0){
-            PreLoginUI.state = UIState.PRE_LOGIN;
             ServerFacade.logout();
-            ChessClient.authToken=null;
+            ChessClient.authToken = null;
+            PreLoginUI.state = UIState.PRE_LOGIN;
             return "logout successful";
         }
         throw new ResponseException(400, "Extra Fields");
@@ -46,7 +46,7 @@ public class PostLoginUI {
                 int gameID = game.gameID();
                 String wName = game.whiteUsername();
                 String bName = game.blackUsername();
-                System.out.println(i+") White: "+ wName + " || Black: "+ bName + " || Game Name: " + name +" || GameID: " + gameID);
+                System.out.println(i+")|| Game Name:" + name + "|| White:" + wName + " || Black: "+ bName +" || GameID: " + gameID +"\n");
             }
             return "--end of games list--";
 
@@ -60,21 +60,24 @@ public class PostLoginUI {
             int gameNum = Integer.parseInt(SgameNum)-1;
             GameData subjectGame = wideListOfGames.get(gameNum);
             int gameID = subjectGame.gameID();
+//            String display = new ChessDesign().toString();
 
             if (Objects.equals(playercolor, "white")){
                 JoinData joinSend = new JoinData("WHITE", gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
-                return "Successfully joined as White Player";
+
+
+                return "Successfully joined as White Player\n" ;
             }
             else if(Objects.equals(playercolor, ".")){
                 JoinData joinSend = new JoinData(null, gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
-                return "Successfully joined as Observer";
+                return "Successfully joined as Observer\n";
             }
             else {
                 JoinData joinSend = new JoinData("BLACK", gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
-                return "Successfully joined as Black player";
+                return "Successfully joined as Black player\n";
             }
 
         }
