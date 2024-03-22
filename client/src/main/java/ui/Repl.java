@@ -6,9 +6,10 @@ import java.util.Scanner;
 public class Repl {
     public String serverUrl;
     private static UIState state = UIState.PRE_LOGIN;
+    private ChessClient client;
 
     public Repl(String serverUrl) {
-        this.serverUrl = serverUrl;
+        client = new ChessClient(serverUrl);
     }
 
     public void run() {

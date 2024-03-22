@@ -6,13 +6,10 @@ import ui.Repl.*;
 
 public class ChessClient {
     public static String authToken;
-    private final ServerFacade server;
-    private String serverUrl;
-    private UIState state = UIState.PRE_LOGIN;
+    private final UIState state = UIState.PRE_LOGIN;
 
     public ChessClient(String serverUrl){
-        server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
+        ServerFacade server = new ServerFacade(serverUrl);
     }
 
     public static String readInput(String input){

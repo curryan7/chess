@@ -17,7 +17,8 @@ public class PreLoginUI {
             String username = params[0];
             String password = params[1];
             UserData loginSend = new UserData(username, password, null);
-            LoginResult loginFinish = ServerFacade.login(loginSend);
+            ServerFacade server = new ServerFacade("http://localhost:8080");
+            LoginResult loginFinish = server.login(loginSend);
             String authToken = loginFinish.authToken();
             ChessClient.authToken = authToken;
 

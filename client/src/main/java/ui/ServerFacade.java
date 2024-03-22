@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerFacade {
-    public static String serverURL;
+    public String serverURL;
 
     public ServerFacade(String url){
         this.serverURL = url;
