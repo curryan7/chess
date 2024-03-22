@@ -192,7 +192,7 @@ public class ChessDesign {
                         out.print(" " + piece + " ");
                     }
                     else if (boardRow == 6){
-                        String piece = pawns[j];
+                        String piece = pawns[k];
                         k++;
                         if (k==7){
                             k = 0;
@@ -201,7 +201,7 @@ public class ChessDesign {
                         out.print(" " + piece + " ");
                     }
                     else if (boardRow ==7){
-                        String piece = bigPieces[i];
+                        String piece = bigPieces[l];
                         l++;
                         if (l == 7) {
                             l = 0;
@@ -280,7 +280,7 @@ public class ChessDesign {
                         out.print(" " + piece + " ");
                     }
                     else if (boardRow == 6){
-                        String piece = pawns[j];
+                        String piece = pawns[k];
                         k++;
                         if (k==7){
                             k = 0;
@@ -289,7 +289,7 @@ public class ChessDesign {
                         out.print(" " + piece + " ");
                     }
                     else if (boardRow ==7){
-                        String piece = bigPieces[i];
+                        String piece = bigPieces[l];
                         l++;
                         if (l == 7) {
                             l = 0;
