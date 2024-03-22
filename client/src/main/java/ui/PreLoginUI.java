@@ -20,9 +20,12 @@ public class PreLoginUI {
             LoginResult loginFinish = ServerFacade.login(loginSend);
             String authToken = loginFinish.authToken();
 
-            System.out.println("you are now logged in as "+username);
-
-            return authToken;
+            if(authToken != null){
+                System.out.println("you are now logged in as "+username);
+            }
+            else{
+                throw new ResponseException(400, "Missing Fields");
+            }
         }
         throw new ResponseException(400, "Missing Fields ");
     }
@@ -36,9 +39,15 @@ public class PreLoginUI {
 
             UserData registerSend = new UserData(username, password, email);
             RegisterResult registerFinish = ServerFacade.register(registerSend);
-            String
-        }
+            String authToken = registerFinish.authToken();
 
+            if(authToken != null){
+                System.out.println("you are now logged in as "+username);
+            }
+            else{
+                throw new ResponseException(400, "Missing Fields");
+            }
+        }
         throw new ResponseException(400, "Missing Fields");
     }
 }

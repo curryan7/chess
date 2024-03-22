@@ -22,6 +22,11 @@ public class ChessClient {
                 case "login"->PreLoginUI.login(params);
                 case "register"-> PreLoginUI.register(params);
                 case "quit" -> "quit";
+                case "logout"-> PostLoginUI.logout(params);
+                case "creategame"-> PostLoginUI.createGame(params);
+                case "listgames"-> PostLoginUI.listGames(params);
+                case "joingame"-> PostLoginUI.joinGame(params);
+                case "joinobserver"->PostLoginUI.joinobserver(params);
                 default -> help();
             };
 
