@@ -26,7 +26,7 @@ public class Server {
         Spark.post("/user", this::register);
         // login
         Spark.post("/session", this::login);
-//        logout
+        // logout
         Spark.delete("/session", this::logout);
         // list games
         Spark.get("/game", this::listGames);

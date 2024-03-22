@@ -7,6 +7,9 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -14,27 +17,53 @@ public class ChessDesign {
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     static ChessGame game;
 
-    public ChessDesign() {
-    }
 
-    public static void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
-        out.print(ERASE_SCREEN);
-
-        drawThemHorizontalAxis(out,1);
-        drawChessBoard(out, 1, game);
-        drawThemHorizontalAxis(out, 1);
-
-
-        drawThemHorizontalAxis(out, 2);
-        drawChessBoard(out,2, game);
-        drawThemHorizontalAxis(out, 2);
-
-
-
-    }
-
+//    public static void main(String[] args) {
+//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+//
+//        out.print(ERASE_SCREEN);
+//        boolean running = true;
+//
+//        while(running) {
+//            System.out.printf("Welcome to Chess. Type 'help' to get started%n>>> ");
+//            Scanner scanner = new Scanner(System.in);
+//            String line = scanner.nextLine();
+//
+//            var tokens = line.toLowerCase().split(" ");
+//            var cmd = (tokens.length > 0) ? tokens [0] : "help";
+//            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+//
+//            if (cmd.equals("help")) {
+//                System.out.print("register <USERNAME> <PASSWORD> <EMAIL> - to create an account\nlogin <USERNAME> <PASSWORD> - to play chess\nquit - to exit the program\nhelp - to make this list reappear\n >>>");
+//                line = scanner.nextLine();
+//
+//                switch(line){
+//                    case "help":
+//                        System.out.print("register <USERNAME> <PASSWORD> <EMAIL> - to create an account\nlogin <USERNAME> <PASSWORD> - to play chess\nquit - to exit the program\nhelp - to make this list reappear\n >>>");
+//                        break;
+//                    case "quit":
+//                        System.out.println("Exiting Chess. Goodbye!");
+//                        running = false;
+//                        break;
+//                    case"login":
+//
+//                }
+//            }
+//            System.out.println("Invalid command. Type 'help' for available commands.");
+//
+//
+//        }
+//
+//        drawThemHorizontalAxis(out,1);
+//        drawChessBoard(out, 1, game);
+//        drawThemHorizontalAxis(out, 1);
+//
+//
+//        drawThemHorizontalAxis(out, 2);
+//        drawChessBoard(out,2, game);
+//        drawThemHorizontalAxis(out, 2);
+//
+//    }
 
     private static void drawThemHorizontalAxis(PrintStream out, int orientation) {
         if (orientation ==1 ) {
@@ -190,6 +219,7 @@ public class ChessDesign {
                                         out.print(WHITE_PAWN);
                                         break;
                                 }
+
                             case BLACK:
                                 switch(getSquarePiece(game, boardRow, boardCol)){
                                     case BISHOP:
