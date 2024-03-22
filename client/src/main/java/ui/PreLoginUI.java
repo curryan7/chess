@@ -10,26 +10,22 @@ import java.util.Arrays;
 
 public class PreLoginUI {
 
-    public static UIState state = UIState.PRE_LOGIN;
+    public static UIState state;
     public static String login(String... params) throws ResponseException {
         if (params.length >= 1) {
             state = UIState.POST_LOGIN;
             String username = params[0];
             String password = params[1];
             UserData loginSend = new UserData(username, password, null);
-            ServerFacade server = new ServerFacade("http://localhost:8080");
-            LoginResult loginFinish = server.login(loginSend);
+            LoginResult loginFinish = ServerFacade.login(loginSend);
             String authToken = loginFinish.authToken();
             ChessClient.authToken = authToken;
 
-            if(authToken != null){
-                System.out.println("you are now logged in as "+username);
-            }
-            else{
+            if(authToken == null){
                 throw new ResponseException(400, "Missing Fields");
             }
         }
-        throw new ResponseException(400, "Missing Fields ");
+        return "you are now logged in";
     }
 
     public static String register(String... params) throws ResponseException {
@@ -44,7 +40,7 @@ public class PreLoginUI {
             String authToken = registerFinish.authToken();
 
             if(authToken != null){
-                System.out.println("you are now logged in as "+username);
+                return "you are now logged in as "+username;
             }
             else{
                 throw new ResponseException(400, "Missing Fields");

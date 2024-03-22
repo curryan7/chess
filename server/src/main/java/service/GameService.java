@@ -47,7 +47,7 @@ public class GameService {
                 throw new DataAccessException("Error: bad request");
                 }
         }
-        catch (DataAccessException e) {
+        catch (DataAccessException | SQLException e) {
             if (e.getMessage().equals("Error: unauthorized")){
                 return new GameCreationResult(0, "Error: unauthorized");
             }
@@ -59,7 +59,6 @@ public class GameService {
             }
             }
         }
-
     public static void joinGame(JoinData joinData, String token) throws DataAccessException, SQLException {
         if (verifyToken(token)) {
             if(verifyData(joinData)) {

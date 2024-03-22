@@ -91,6 +91,25 @@ public class MySqlDataAccess {
         }
     }
 
+    public static Boolean grabGame(String gamename) throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()){
+            var statement = """
+                    SELECT GameID,whiteUserName,blackUsername,gameName,game FROM Games WHERE gameName=?
+                    """;
+            try (var grabGameStatement = conn.prepareStatement(statement)){
+                grabGameStatement.setString(1, gamename);
+                try (ResultSet gameResult = grabGameStatement.executeQuery()) {
+                    //                        int gID = gameResult.getInt("GameID");
+                    //                        String wUsername = gameResult.getString("whiteUsername");
+                    //                        String bUsername = gameResult.getString("blackUsername");
+                    //                        String gName = gameResult.getString("gameName");
+                    //                        String cGame = gameResult.getString("game");
+                    return !gameResult.next();
+                }
+            }
+        }
+    }
+
     public static Boolean createUser(UserData userinfo) throws DataAccessException {
         String uname = userinfo.username();
         String pword = userinfo.password();
@@ -209,28 +228,36 @@ public class MySqlDataAccess {
         }
     }
 
-    public static GameData createGame(GameData gameData) throws DataAccessException {
-        int gameID = rand.nextInt(500);
-        GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
-        Gson gson = new Gson();
-        String gameString = gson.toJson(finalGameData.game());
-        try (var conn = DatabaseManager.getConnection()) {
-            var createUserStatement = """
+    public static GameData createGame(GameData gameData) throws DataAccessException, SQLException {
+        String gameName = gameData.gameName();
+        if(Boolean.TRUE.equals(grabGame(gameName))){
+            int gameID = rand.nextInt(500);
+            GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            Gson gson = new Gson();
+            String gameString = gson.toJson(finalGameData.game());
+            try (var conn = DatabaseManager.getConnection()) {
+                var createUserStatement = """
                             INSERT INTO Games (GameID, whiteUserName, blackUserName, gameName, game) VALUES (?, ?, ?, ?, ?)
                     """;
-            try (var GameInsertStatement = conn.prepareStatement(createUserStatement)) {
-                GameInsertStatement.setInt(1, gameID);
-                GameInsertStatement.setString(2, finalGameData.whiteUsername());
-                GameInsertStatement.setString(3, finalGameData.blackUsername());
-                GameInsertStatement.setString(4, finalGameData.gameName());
-                GameInsertStatement.setString(5, gameString);
+                try (var GameInsertStatement = conn.prepareStatement(createUserStatement)) {
+                    GameInsertStatement.setInt(1, gameID);
+                    GameInsertStatement.setString(2, finalGameData.whiteUsername());
+                    GameInsertStatement.setString(3, finalGameData.blackUsername());
+                    GameInsertStatement.setString(4, finalGameData.gameName());
+                    GameInsertStatement.setString(5, gameString);
 
-                GameInsertStatement.executeUpdate();
-                return finalGameData;
+                    GameInsertStatement.executeUpdate();
+                    return finalGameData;
+                }
+            } catch (SQLException | DataAccessException e) {
+                throw new DataAccessException("Error: bad request");
             }
-        } catch (SQLException | DataAccessException e) {
+        }
+        else {
             throw new DataAccessException("Error: bad request");
         }
+
+
     }
 
     public static Boolean verifyGameID(int gameID) throws DataAccessException {

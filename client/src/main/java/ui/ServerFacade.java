@@ -3,57 +3,55 @@ import com.google.gson.Gson;
 import model.*;
 import java.io.*;
 import java.net.*;
-import org.glassfish.grizzly.http.server.Request;
-import org.glassfish.grizzly.http.server.Response;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerFacade {
-    public String serverURL;
+    public static String serverURL;
 
     public ServerFacade(String url){
-        this.serverURL = url;
-        System.out.println(serverURL);
+        serverURL = url;
     }
 
     public static RegisterResult register(UserData req) throws ResponseException {
+        System.out.println(serverURL);
         var path = "/user";
         return makeRequest("POST", path, req, RegisterResult.class);
     }
 
     public static LoginResult login(UserData req) throws ResponseException {
-//        Gson gson = new Gson();
-//        String loginSend = gson.toJson(req);
         var path = "/session";
         return makeRequest("POST", path, req, LoginResult.class);
     }
 
-    public LoginResult logout(String req) throws ResponseException {
+    public static void logout(String... params) throws ResponseException {
         var path = "/session";
-        return makeRequest("DELETE", path, req, LoginResult.class);
+        makeRequest("DELETE", path, null, LogoutResult.class);
     }
 
-    public GameList listgames(Request req) throws ResponseException {
+    public static GameList listgames(String... params) throws ResponseException {
         var path = "/game";
-        return makeRequest("GET", path, req, GameList.class);
+        return makeRequest("GET", path, null, GameList.class);
     }
 
-    public SuccessJoin joinGame(Request req) throws ResponseException {
+    public static SuccessJoin joinGame(JoinData req) throws ResponseException {
         var path = "/game";
         return makeRequest("PUT", path, req, SuccessJoin.class);
     }
 
-    public GameCreationResult createGame(Request req) throws ResponseException {
+    public static GameCreationResult createGame(GameData req) throws ResponseException {
         var path = "/game";
         return makeRequest("POST", path, req, GameCreationResult.class);
     }
 
     private static <T> T makeRequest(String method, String path, Object req, Class<T> responseClass) throws ResponseException {
         try{
-            System.out.println(ServerFacade.serverURL);
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            if (ChessClient.authToken!= null){
+                http.addRequestProperty("authorization", ChessClient.authToken);
+            }
+
             http.setRequestMethod(method);
             http.setDoOutput(true);
 

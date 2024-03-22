@@ -1,6 +1,5 @@
 package ui;
 
-import java.net.URL;
 import java.util.Scanner;
 
 public class Repl {
@@ -34,7 +33,7 @@ public class Repl {
     }
 
     public static String help() {
-        if (state == UIState.PRE_LOGIN) {
+        if (PreLoginUI.state == UIState.PRE_LOGIN | PreLoginUI.state == null) {
             return """
                     - help
                     - quit
@@ -51,6 +50,7 @@ public class Repl {
                 - joinobserver <type "."> <gameID> 
                 """;
     }
+
     private void printPrompt() {
         System.out.print("\n>>> ");
     }
