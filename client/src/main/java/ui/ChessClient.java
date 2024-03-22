@@ -1,11 +1,13 @@
 package ui;
 
 import java.util.Arrays;
-import static ui.Repl.help;
+
+import ui.Repl.*;
 
 public class ChessClient {
+    public static String authToken;
     private final ServerFacade server;
-    private final String serverUrl;
+    private String serverUrl;
     private UIState state = UIState.PRE_LOGIN;
 
     public ChessClient(String serverUrl){
@@ -22,16 +24,17 @@ public class ChessClient {
                 case "login"->PreLoginUI.login(params);
                 case "register"-> PreLoginUI.register(params);
                 case "quit" -> "quit";
-                case "logout"-> PostLoginUI.logout(params);
-                case "creategame"-> PostLoginUI.createGame(params);
-                case "listgames"-> PostLoginUI.listGames(params);
-                case "joingame"-> PostLoginUI.joinGame(params);
-                case "joinobserver"->PostLoginUI.joinobserver(params);
-                default -> help();
+//                case "logout"-> PostLoginUI.logout(params);
+//                case "creategame"-> PostLoginUI.createGame(params);
+//                case "listgames"-> PostLoginUI.listGames(params);
+//                case "joingame"-> PostLoginUI.joinGame(params);
+//                case "joinobserver"->PostLoginUI.joinobserver(params);
+                default -> Repl.help();
             };
 
         } catch (Exception ex) {
             return ex.getMessage();
         }
     }
+
 }

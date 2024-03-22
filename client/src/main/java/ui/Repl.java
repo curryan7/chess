@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class Repl {
-    private final String serverUrl;
+    public String serverUrl;
     private static UIState state = UIState.PRE_LOGIN;
 
     public Repl(String serverUrl) {
@@ -12,7 +12,7 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println("\uD83D\uDC36 Welcome to Chess. Press help to start.");
+        System.out.println("Welcome to Chess. Press help to start.");
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -35,17 +35,19 @@ public class Repl {
     public static String help() {
         if (state == UIState.PRE_LOGIN) {
             return """
-                    - signIn <yourname>
+                    - help
                     - quit
+                    - login <username> <password>
+                    - register <username> <password> <email>
                     """;
         }
         return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
-                - quit
+                - help
+                - logout
+                - creategame <gamename>
+                - listgames 
+                - joingame <playercolor:WHITE or BLACK> <gameID>
+                - joinobserver <type "."> <gameID> 
                 """;
     }
     private void printPrompt() {

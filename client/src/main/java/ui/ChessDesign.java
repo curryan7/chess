@@ -65,7 +65,7 @@ public class ChessDesign {
 //
 //    }
 
-    private static void drawThemHorizontalAxis(PrintStream out, int orientation) {
+    private void drawThemHorizontalAxis(PrintStream out, int orientation) {
         if (orientation ==1 ) {
             String[] headers = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
@@ -82,11 +82,11 @@ public class ChessDesign {
         System.out.println(RESET_BG_COLOR);
     }
 
-    private static void drawHorizontalAxis(PrintStream out, String headerText){
+    private void drawHorizontalAxis(PrintStream out, String headerText){
         printHeaderText(out, headerText);
     }
 
-    private static void drawChessBoard(PrintStream out, int orientation, ChessGame game) {
+    private void drawChessBoard(PrintStream out, int orientation, ChessGame game) {
         for (int boardRow = 0; boardRow <= 7; ++boardRow) {
             for (int boardCol = 0; boardCol <= 9; ++boardCol) {
                     if (boardCol == 0 || boardCol == 9) {
@@ -251,33 +251,33 @@ public class ChessDesign {
         }
     }
 
-    private static ChessGame.TeamColor getPieceColor(ChessGame game, int row, int col){
+    private ChessGame.TeamColor getPieceColor(ChessGame game, int row, int col){
         ChessBoard board = game.getBoard();
         return board.getPiece(new ChessPosition(row, col)).getTeamColor();
     }
 
-    private static ChessPiece.PieceType getSquarePiece(ChessGame game, int row, int col){
+    private ChessPiece.PieceType getSquarePiece(ChessGame game, int row, int col){
         ChessBoard board = game.getBoard();
         return board.getPiece(new ChessPosition(row, col)).getPieceType();
     }
-    private static void printHeaderText(PrintStream out, String coordinate) {
+    private void printHeaderText(PrintStream out, String coordinate) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(coordinate);
     }
 
-    private static void printerMarginText(PrintStream out, String coordinate) {
+    private void printerMarginText(PrintStream out, String coordinate) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(coordinate);
     }
 
-    private static void setBlack(PrintStream out) {
+    private void setBlack(PrintStream out) {
         out.print((SET_BG_COLOR_BLACK));
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void setWhite(PrintStream out){
+    private void setWhite(PrintStream out){
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
     }
