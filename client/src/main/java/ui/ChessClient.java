@@ -14,7 +14,7 @@ public class ChessClient {
             var words = input.toLowerCase().split(" ");
             var cmd = (words.length>0) ? words[0] : "help";
             var params = Arrays.copyOfRange(words, 1, words.length);
-            if(PreLoginUI.state != UIState.POST_LOGIN) {
+            if(PreLoginUI.state == UIState.PRE_LOGIN | PreLoginUI.state == null) {
                 return switch (cmd) {
                     case "login" -> PreLoginUI.login(params);
                     case "register" -> PreLoginUI.register(params);
@@ -22,7 +22,7 @@ public class ChessClient {
                     default -> Repl.help();
                 };
             }
-            else{
+            else if (PreLoginUI.state == UIState.POST_LOGIN){
                 return switch(cmd){
                     case "logout" -> PostLoginUI.logout(params);
                     case "creategame"-> PostLoginUI.createGame(params);
@@ -32,9 +32,21 @@ public class ChessClient {
                     default -> Repl.help();
                 };
             }
-        } catch (Exception ex) {
+            else {
+                return switch(cmd){
+//                    case "redraw" -> InGameUI.draw(params);
+                    case "leave"-> InGameUI.leaveGame(params);
+                    case "makemove"-> InGameUI.makeMove(params);
+                    case "resign"-> InGameUI.resignGame(params);
+                    case "highlightmoves"-> InGameUI.highlightMoves(params);
+                    default -> Repl.help();
+
+                };
+            }
+        }
+        catch (Exception ex) {
             return ex.getMessage();
         }
-    }
 
+    }
 }

@@ -41,6 +41,7 @@ public class Repl {
                     - register <username> <password> <email>
                     """;
         }
+        else if(PreLoginUI.state == UIState.POST_LOGIN){
         return """
                 - help
                 - logout
@@ -49,8 +50,18 @@ public class Repl {
                 - joingame <playercolor:WHITE or BLACK> <Game Number>
                 - joinobserver <type "."> <Game Number> 
                 """;
+        }
+        else {
+            return """
+                - help
+                - redraw
+                - leave
+                - makemove<row #><column #>
+                - resign
+                - highlighmoves<piece row #><piece column #>
+                    """;
+        }
     }
-
     private void printPrompt() {
         System.out.print("\n>>> ");
     }

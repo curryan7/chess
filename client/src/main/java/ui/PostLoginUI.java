@@ -1,16 +1,16 @@
 package ui;
 
+import chess.ChessGame;
 import model.*;
-import org.glassfish.grizzly.http.server.Response;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class PostLoginUI {
     public String authToken = ChessClient.authToken;
     public static ArrayList<GameData> wideListOfGames;
+    public static int wideGameID;
+    public static ChessGame.TeamColor currentPlayerColor;
 
 
     public static UIState state = PreLoginUI.state;
@@ -60,23 +60,30 @@ public class PostLoginUI {
             int gameNum = Integer.parseInt(SgameNum)-1;
             GameData subjectGame = wideListOfGames.get(gameNum);
             int gameID = subjectGame.gameID();
-//            String display = new ChessDesign().toString();
 
             if (Objects.equals(playercolor, "white")){
                 JoinData joinSend = new JoinData("WHITE", gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
+                wideGameID = gameID;
+                currentPlayerColor = ChessGame.TeamColor.WHITE;
 
+
+                PreLoginUI.state = UIState.IN_GAME;
 
                 return "Successfully joined as White Player\n" ;
             }
             else if(Objects.equals(playercolor, ".")){
                 JoinData joinSend = new JoinData(null, gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
+                PreLoginUI.state = UIState.IN_GAME;
+                wideGameID = gameID;
                 return "Successfully joined as Observer\n";
             }
             else {
                 JoinData joinSend = new JoinData("BLACK", gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
+                PreLoginUI.state = UIState.IN_GAME;
+                wideGameID = gameID;
                 return "Successfully joined as Black player\n";
             }
 
