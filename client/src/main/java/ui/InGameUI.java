@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessGame;
 import model.*;
 
 public class InGameUI {
@@ -7,6 +8,7 @@ public class InGameUI {
     }
     public static void leaveGame(String...params) throws ResponseException{
         int gameID = PostLoginUI.wideGameID;
+        ChessGame.TeamColor PlayerColor = PostLoginUI.currentPlayerColor;
 
     }
     public static void makeMove(String... params){

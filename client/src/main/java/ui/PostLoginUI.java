@@ -67,11 +67,11 @@ public class PostLoginUI {
                 wideGameID = gameID;
                 currentPlayerColor = ChessGame.TeamColor.WHITE;
 
-
                 PreLoginUI.state = UIState.IN_GAME;
 
                 return "Successfully joined as White Player\n" ;
             }
+
             else if(Objects.equals(playercolor, ".")){
                 JoinData joinSend = new JoinData(null, gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
@@ -79,6 +79,7 @@ public class PostLoginUI {
                 wideGameID = gameID;
                 return "Successfully joined as Observer\n";
             }
+
             else {
                 JoinData joinSend = new JoinData("BLACK", gameID);
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
