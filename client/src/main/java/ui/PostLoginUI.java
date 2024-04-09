@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import model.*;
-
+import ui.commandModels.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -63,7 +63,14 @@ public class PostLoginUI {
 
             if (Objects.equals(playercolor, "white")){
                 JoinData joinSend = new JoinData("WHITE", gameID);
+
+                joinPlayer wsJoinSend = new joinPlayer(gameID, ChessGame.TeamColor.WHITE);
+                wsFacade.joinGame(wsJoinSend);
+
+
+
                 SuccessJoin joinResult = ServerFacade.joinGame(joinSend);
+
                 wideGameID = gameID;
                 currentPlayerColor = ChessGame.TeamColor.WHITE;
 
