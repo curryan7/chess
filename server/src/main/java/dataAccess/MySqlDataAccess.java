@@ -70,6 +70,23 @@ public class MySqlDataAccess {
         }
     }
 
+    public static String grabUsername(String auth) throws SQLException, DataAccessException{
+        try(var conn = DatabaseManager.getConnection()){
+            var grabUserStatement = """
+                    SELECT username FROM Auths WHERE auth =?
+                    """;
+            try (var userStatement = conn.prepareStatement(grabUserStatement)){
+                userStatement.setString(1, auth);
+                try (ResultSet userResult = userStatement.executeQuery()){
+                    if (userResult.next()) {
+                        return userResult.getString("username");
+                    }
+                }
+            }
+        }
+        return auth;
+    }
+
     public static UserData grabUser(String username) throws DataAccessException, SQLException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = """

@@ -1,11 +1,12 @@
 package webSocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.userCommands.*;
 import java.io.IOException;
-import webSocketMessages.serverMessages.ServerMessageModels.*;
+import java.sql.SQLException;
 import webSocketMessages.userCommands.commandModels.*;
 
 
@@ -13,7 +14,7 @@ import webSocketMessages.userCommands.commandModels.*;
 public class WebsocketHandler {
     private static final ConnectionManager connections = new ConnectionManager();
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
+    public void onMessage(Session session, String message) throws IOException, SQLException, DataAccessException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
@@ -29,12 +30,15 @@ public class WebsocketHandler {
         }
     }
 
-    public static void joinGameWS (Session session, String message){
+    public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
         joinPlayer focusPlayer = new Gson().fromJson(message, joinPlayer.class);
         int gameID = focusPlayer.getGameID();
         ChessGame.TeamColor color = focusPlayer.getPlayerColor();
+
+        String colorString = color.toString();
         String auth = focusPlayer.getAuth();
-        connections.add(auth, session, gameID);
+
+        connections.add(auth, session, gameID, colorString);
     }
 
     public static void joinObserver(Session session, String message){

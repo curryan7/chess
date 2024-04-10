@@ -52,7 +52,7 @@ public class PostLoginUI {
         }
         throw new ResponseException(400, "Bad Fields");
     }
-    public static String joinGame (String... params) throws ResponseException{
+    public static String joinGame (String... params) throws Exception {
         if(params.length == 2){
             String playerColor = params[0];
             String sGameNum = params[1];
@@ -61,7 +61,6 @@ public class PostLoginUI {
             int gameID = subjectGame.gameID();
 
             if (Objects.equals(playerColor, "white")){
-                String userName = subjectGame.whiteUsername();
                 JoinData joinSend = new JoinData("WHITE", gameID);
                 ServerFacade.joinGame(joinSend);
 
@@ -69,10 +68,7 @@ public class PostLoginUI {
                 widePlayerColor = ChessGame.TeamColor.WHITE;
                 PreLoginUI.state = UIState.IN_GAME;
 
-//                wsFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
-////////////////////////////////////////////////////////////
-
-                return userName + " successfully joined as White Player\n" ;
+                wsFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
             }
 
             else if(Objects.equals(playerColor, ".")){
@@ -85,11 +81,14 @@ public class PostLoginUI {
 
             else {
                 JoinData joinSend = new JoinData("BLACK", gameID);
-                String userName = subjectGame.blackUsername();
                 ServerFacade.joinGame(joinSend);
+
                 PreLoginUI.state = UIState.IN_GAME;
                 wideGameID = gameID;
-                return userName + " successfully joined as Black player\n";
+                widePlayerColor = ChessGame.TeamColor.BLACK;
+                PreLoginUI.state = UIState.IN_GAME;
+
+                wsFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
             }
         }
         throw new ResponseException(400, "Bad Request");
