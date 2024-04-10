@@ -56,7 +56,7 @@ public class Repl {
                 - help
                 - redraw
                 - leave
-                - makemove<row #><column #>
+                - makemove <Piece row #><Piece col #> <Move row #><Move col #>
                 - resign
                 - highlighmoves<piece row #><piece column #>
                     """;
