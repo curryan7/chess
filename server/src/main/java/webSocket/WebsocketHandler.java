@@ -41,6 +41,7 @@ public class WebsocketHandler {
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
         joinPlayer focusPlayer = new Gson().fromJson(message, joinPlayer.class);
         int gameID = focusPlayer.getGameID();
+
         ChessGame.TeamColor color = focusPlayer.getPlayerColor();
 
         String colorString = color.toString();
