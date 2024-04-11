@@ -127,6 +127,22 @@ public class MySqlDataAccess {
         }
     }
 
+    public static String grabGameByID(int gameID)throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var grabGameStatement = """
+                    SELECT game FROM Games WHERE gameID = ?
+                    """;
+            try (var snatchGameStatement = conn.prepareStatement(grabGameStatement)){
+                snatchGameStatement.setInt(1, gameID);
+                ResultSet gameResult = snatchGameStatement.executeQuery();
+                if(gameResult.next()){
+                    return gameResult.getString("game");
+                }
+            }
+        }
+        return null;
+    };
+
     public static Boolean createUser(UserData userinfo) throws DataAccessException {
         String uname = userinfo.username();
         String pword = userinfo.password();

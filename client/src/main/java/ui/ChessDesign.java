@@ -16,13 +16,26 @@ import static ui.EscapeSequences.*;
 
 public class ChessDesign {
     private static final int BOARD_SIZE_IN_SQUARES = 10;
+
+    public static void setGame(ChessGame game) {
+        ChessDesign.game = game;
+    }
+
+    public void setColor(ChessGame.TeamColor color) {
+        this.color = color;
+    }
+
     static ChessGame game ;
+    ChessGame.TeamColor color;
+
     static String[] bigPieces ={"R","N","B","Q","K","B","N","R"};
     static String[] pawns = {"P", "P", "P", "P", "P", "P", "P", "P"};
 
+    public ChessDesign() {}
 
-    public static void main(String[] args) {
+    public static void finalDraw(int orientation) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
         ChessBoard board = new ChessBoard();
         board.resetBoard();
         ChessGame game = new ChessGame();
@@ -31,15 +44,9 @@ public class ChessDesign {
 
         out.print(ERASE_SCREEN);
 
-
-        drawThemHorizontalAxis(out,1);
-        drawChessBoard(out, 1, game);
-        drawThemHorizontalAxis(out, 1);
-
-        drawThemHorizontalAxis(out,2);
-        drawChessBoard(out, 2, game);
-        drawThemHorizontalAxis(out, 2);
-
+        drawThemHorizontalAxis(out,orientation);
+        drawChessBoard(out, orientation, game);
+        drawThemHorizontalAxis(out, orientation);
 
     }
 
@@ -138,51 +145,7 @@ public class ChessDesign {
                         }
                         out.print(" " + piece + " ");
                     }
-//                    switch (getPieceColor(game, boardRow, boardCol)){
-//                        case WHITE:
-//                            switch(getSquarePiece(game, boardRow, boardCol)){
-//                                case BISHOP:
-//                                    out.print(WHITE_BISHOP);
-//                                    break;
-//                                case ROOK:
-//                                    out.print(WHITE_ROOK);
-//                                    break;
-//                                case KNIGHT:
-//                                    out.print(WHITE_KNIGHT);
-//                                    break;
-//                                case KING:
-//                                    out.print(WHITE_KING);
-//                                    break;
-//                                case QUEEN:
-//                                    out.print(WHITE_QUEEN);
-//                                    break;
-//                                case PAWN:
-//                                    out.print(WHITE_PAWN);
-//                                    break;
-//                            }
-//                            break;
-//                        case BLACK:
-//                            switch(getSquarePiece(game, boardRow, boardCol)){
-//                                case BISHOP:
-//                                    out.print(BLACK_BISHOP);
-//                                    break;
-//                                case ROOK:
-//                                    out.print(BLACK_ROOK);
-//                                    break;
-//                                case KNIGHT:
-//                                    out.print(BLACK_KNIGHT);
-//                                    break;
-//                                case KING:
-//                                    out.print(BLACK_KING);
-//                                    break;
-//                                case QUEEN:
-//                                    out.print(BLACK_QUEEN);
-//                                    break;
-//                                case PAWN:
-//                                    out.print(BLACK_PAWN);
-//                                    break;
-//                            }
-//                    }
+
                     else if (boardRow == 1){
                         String piece = pawns[j];
                         j++;
@@ -216,53 +179,7 @@ public class ChessDesign {
                 } else if ((boardRow+boardCol)%2 != 0 && orientation == 1) {
                     setBlack(out);
                     setGreenText(out);
-//                        switch (getPieceColor(game, boardRow, boardCol)){
-//                            case WHITE:
-//                                switch(getSquarePiece(game, boardRow, boardCol)){
-//                                    case BISHOP:
-//                                        out.print(WHITE_BISHOP);
-//                                        break;
-//                                    case ROOK:
-//                                        out.print(WHITE_ROOK);
-//                                        break;
-//                                    case KNIGHT:
-//                                        out.print(WHITE_KNIGHT);
-//                                        break;
-//                                    case KING:
-//                                        out.print(WHITE_KING);
-//                                        break;
-//                                    case QUEEN:
-//                                        out.print(WHITE_QUEEN);
-//                                        break;
-//                                    case PAWN:
-//                                        out.print(WHITE_PAWN);
-//                                        break;
-//                                }
-//                                break;
-//
-//                            case BLACK:
-//                                switch(getSquarePiece(game, boardRow, boardCol)){
-//                                    case BISHOP:
-//                                        out.print(BLACK_BISHOP);
-//                                        break;
-//                                    case ROOK:
-//                                        out.print(BLACK_ROOK);
-//                                        break;
-//                                    case KNIGHT:
-//                                        out.print(BLACK_KNIGHT);
-//                                        break;
-//                                    case KING:
-//                                        out.print(BLACK_KING);
-//                                        break;
-//                                    case QUEEN:
-//                                        out.print(BLACK_QUEEN);
-//                                        break;
-//                                    case PAWN:
-//                                        out.print(BLACK_PAWN);
-//                                        break;
-//                                }
-//                                break;
-//                        }
+
                     if (boardRow == 0) {
                         String piece = bigPieces[i];
                         i++;
@@ -312,51 +229,7 @@ public class ChessDesign {
                         }
                         out.print(" "+piece+" ");
                     }
-//                    switch (getPieceColor(game, boardRow, boardCol)){
-//                        case WHITE:
-//                            switch(getSquarePiece(game, boardRow, boardCol)){
-//                                case BISHOP:
-//                                    out.print(WHITE_BISHOP);
-//                                    break;
-//                                case ROOK:
-//                                    out.print(WHITE_ROOK);
-//                                    break;
-//                                case KNIGHT:
-//                                    out.print(WHITE_KNIGHT);
-//                                    break;
-//                                case KING:
-//                                    out.print(WHITE_KING);
-//                                    break;
-//                                case QUEEN:
-//                                    out.print(WHITE_QUEEN);
-//                                    break;
-//                                case PAWN:
-//                                    out.print(WHITE_PAWN);
-//                                    break;
-//                            }
-//                            break;
-//                        case BLACK:
-//                            switch(getSquarePiece(game, boardRow, boardCol)){
-//                                case BISHOP:
-//                                    out.print(BLACK_BISHOP);
-//                                    break;
-//                                case ROOK:
-//                                    out.print(BLACK_ROOK);
-//                                    break;
-//                                case KNIGHT:
-//                                    out.print(BLACK_KNIGHT);
-//                                    break;
-//                                case KING:
-//                                    out.print(BLACK_KING);
-//                                    break;
-//                                case QUEEN:
-//                                    out.print(BLACK_QUEEN);
-//                                    break;
-//                                case PAWN:
-//                                    out.print(BLACK_PAWN);
-//                                    break;
-//                            }
-//                    }'
+
                     else if (boardRow == 1){
                         String piece = pawns[j];
                         j++;
@@ -390,53 +263,6 @@ public class ChessDesign {
                 } else if ((boardRow + boardCol) % 2 != 0 && orientation==2) {
                     setBlack(out);
                     setRedText(out);
-//                        switch (getPieceColor(game, boardRow, boardCol)){
-//                            case WHITE:
-//                                switch(getSquarePiece(game, boardRow, boardCol)){
-//                                    case BISHOP:
-//                                        out.print(WHITE_BISHOP);
-//                                        break;
-//                                    case ROOK:
-//                                        out.print(WHITE_ROOK);
-//                                        break;
-//                                    case KNIGHT:
-//                                        out.print(WHITE_KNIGHT);
-//                                        break;
-//                                    case KING:
-//                                        out.print(WHITE_KING);
-//                                        break;
-//                                    case QUEEN:
-//                                        out.print(WHITE_QUEEN);
-//                                        break;
-//                                    case PAWN:
-//                                        out.print(WHITE_PAWN);
-//                                        break;
-//                                }
-//                                break;
-//
-//                            case BLACK:
-//                                switch(getSquarePiece(game, boardRow, boardCol)){
-//                                    case BISHOP:
-//                                        out.print(BLACK_BISHOP);
-//                                        break;
-//                                    case ROOK:
-//                                        out.print(BLACK_ROOK);
-//                                        break;
-//                                    case KNIGHT:
-//                                        out.print(BLACK_KNIGHT);
-//                                        break;
-//                                    case KING:
-//                                        out.print(BLACK_KING);
-//                                        break;
-//                                    case QUEEN:
-//                                        out.print(BLACK_QUEEN);
-//                                        break;
-//                                    case PAWN:
-//                                        out.print(BLACK_PAWN);
-//                                        break;
-//                                }
-//                                break;
-//                        }
                     if (boardRow == 0) {
                         String piece = bigPieces[i];
                         i++;
@@ -475,7 +301,6 @@ public class ChessDesign {
                         out.print("   ");
                     }
                 }
-
 
                 out.print(RESET_BG_COLOR);
             }

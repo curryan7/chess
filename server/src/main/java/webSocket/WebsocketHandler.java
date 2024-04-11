@@ -2,8 +2,11 @@ package webSocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import dataAccess.MySqlDataAccess;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 import webSocketMessages.userCommands.*;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,7 +23,7 @@ public class WebsocketHandler {
             case JOIN_PLAYER:
                 joinGameWS(session, message);
             case JOIN_OBSERVER:
-                joinObserver(session, message);
+                System.out.println("sad");
             case MAKE_MOVE:
                 System.out.println("moved");
             case LEAVE:
@@ -36,12 +39,14 @@ public class WebsocketHandler {
         ChessGame.TeamColor color = focusPlayer.getPlayerColor();
 
         String colorString = color.toString();
-        String auth = focusPlayer.getAuth();
-
+        String auth = focusPlayer.getAuthString();
+        String gameString = MySqlDataAccess.grabGameByID(gameID);
+        Gson gson = new Gson();
+        ChessGame validGame = gson.fromJson(gameString, ChessGame.class);
+        loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, validGame);
         connections.add(auth, session, gameID, colorString);
+        session.getRemote().sendString(gson.toJson(gotGame));
     }
 
-    public static void joinObserver(Session session, String message){
-        //logic
-    }
+
 }

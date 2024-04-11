@@ -7,6 +7,7 @@ import dataAccess.MySqlDataAccess;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
+import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,9 +34,14 @@ public class ConnectionManager {
         }
 
         String username = MySqlDataAccess.grabUsername(auth);
+        String gameString = MySqlDataAccess.grabGameByID(gameID);
+        Gson gson = new Gson();
+        ChessGame validGame = gson.fromJson(gameString, ChessGame.class);
 
         Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as " + color);
+        loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, validGame);
         announce(addMessage, gameID);
+        announce(gotGame, gameID);
     }
 
     public void announce(ServerMessage message, int gameID) throws IOException {
@@ -49,5 +55,7 @@ public class ConnectionManager {
                 conn.session.getRemote().sendString(formattedMessage);
             }
         }
+
     }
+
 }

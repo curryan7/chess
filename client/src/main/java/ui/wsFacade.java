@@ -8,6 +8,7 @@ import java.net.URI;
 
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
+import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 import webSocketMessages.userCommands.commandModels.joinPlayer;
 
 public class wsFacade extends Endpoint{
@@ -31,11 +32,14 @@ public class wsFacade extends Endpoint{
                 ServerMessage jump = gson.fromJson(message, ServerMessage.class);
                 switch(jump.getServerMessageType()){
                     case NOTIFICATION:
-                       Notification notification = new Notification(jump.getServerMessageType(), Notification.class);
+                       Notification notification = gson.fromJson(message, Notification.class);
+                       processNotification(notification);
                     case ERROR:
-                        System.out.println("sad");
+                        Error error = gson.fromJson(message, Error.class);
+                        processError(error);
                     case LOAD_GAME:
-                        System.out.println("meh");
+                        loadGame loader = gson.fromJson(message, loadGame.class);
+                        processLoad(loader);
                 }
             }
         });
@@ -47,8 +51,28 @@ public class wsFacade extends Endpoint{
         send(gson.toJson(joinRequest));
     }
 
-    public static String processNotification(String message){
-        Notification newNotif = new Notification(message);
+    public static void processNotification(Notification message){
+        String shoutout = message.getMessage();
+        System.out.println(shoutout);
+    }
+
+    public static void processError(Error message){
+        String error = message.getMessage();
+        System.out.println(error);
+    }
+
+    public static void processLoad(loadGame message){
+        ChessGame game = message.getGame();
+        ChessDesign.setGame(game);
+        ChessDesign.game.setBoard(game.getBoard());
+        if (PostLoginUI.widePlayerColor == ChessGame.TeamColor.BLACK){
+            int orientation = 1;
+            ChessDesign.finalDraw(orientation);
+        }
+        else if (PostLoginUI.widePlayerColor == ChessGame.TeamColor.WHITE){
+            int orientation = 2;
+            ChessDesign.finalDraw(orientation);
+        }
     }
 
     public static void send(String msg) throws Exception {
@@ -56,7 +80,6 @@ public class wsFacade extends Endpoint{
     }
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-
     }
 
 }
