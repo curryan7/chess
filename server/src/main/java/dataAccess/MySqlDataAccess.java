@@ -127,16 +127,23 @@ public class MySqlDataAccess {
         }
     }
 
-    public static String grabGameByID(int gameID)throws DataAccessException, SQLException {
+    public static GameData grabGameByID(int gameID)throws DataAccessException, SQLException {
         try (var conn = DatabaseManager.getConnection()) {
             var grabGameStatement = """
-                    SELECT game FROM Games WHERE GameID = ?
+                    SELECT GameID,whiteUserName,blackUsername,gameName,game FROM Games WHERE GameID = ?
                     """;
             try (var snatchGameStatement = conn.prepareStatement(grabGameStatement)){
                 snatchGameStatement.setInt(1, gameID);
                 ResultSet gameResult = snatchGameStatement.executeQuery();
                 if(gameResult.next()){
-                    return gameResult.getString("game");
+                    int gID = gameResult.getInt("GameID");
+                    String wUsername = gameResult.getString("whiteUsername");
+                    String bUsername = gameResult.getString("blackUsername");
+                    String gName = gameResult.getString("gameName");
+                    String cGame = gameResult.getString("game");
+
+
+                    return new GameData(gID, wUsername, bUsername, gName, new Gson().fromJson(cGame, ChessGame.class));
                 }
             }
         }
