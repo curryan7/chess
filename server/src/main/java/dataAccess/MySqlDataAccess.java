@@ -70,10 +70,10 @@ public class MySqlDataAccess {
         }
     }
 
-    public static String grabUsername(String auth) throws SQLException, DataAccessException{
+    public static String getUsername(String auth) throws SQLException, DataAccessException{
         try(var conn = DatabaseManager.getConnection()){
             var grabUserStatement = """
-                    SELECT username FROM Auths WHERE auth =?
+                    SELECT username FROM Auths WHERE authToken =?
                     """;
             try (var userStatement = conn.prepareStatement(grabUserStatement)){
                 userStatement.setString(1, auth);
@@ -130,7 +130,7 @@ public class MySqlDataAccess {
     public static String grabGameByID(int gameID)throws DataAccessException, SQLException {
         try (var conn = DatabaseManager.getConnection()) {
             var grabGameStatement = """
-                    SELECT game FROM Games WHERE gameID = ?
+                    SELECT game FROM Games WHERE GameID = ?
                     """;
             try (var snatchGameStatement = conn.prepareStatement(grabGameStatement)){
                 snatchGameStatement.setInt(1, gameID);
@@ -265,9 +265,12 @@ public class MySqlDataAccess {
         String gameName = gameData.gameName();
         if(Boolean.TRUE.equals(grabGame(gameName))){
             int gameID = rand.nextInt(500);
-            GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            ChessGame gameObject = new ChessGame();
+            GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameObject);
+
             Gson gson = new Gson();
-            String gameString = gson.toJson(finalGameData.game());
+            String gameString = gson.toJson(gameObject);
+
             try (var conn = DatabaseManager.getConnection()) {
                 var createUserStatement = """
                             INSERT INTO Games (GameID, whiteUserName, blackUserName, gameName, game) VALUES (?, ?, ?, ?, ?)

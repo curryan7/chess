@@ -22,8 +22,6 @@ public class ConnectionManager {
         if (connections.get(gameID)!=null){
             Vector<Connection> edit = connections.get(gameID);
             edit.add(connection);
-            wideConnection = connection;
-
         }
         else{
             Connection nConnection = new Connection(auth, session);
@@ -32,8 +30,9 @@ public class ConnectionManager {
             connections.put(gameID, v);
             v.remove(nConnection);
         }
+        wideConnection = connection;
 
-        String username = MySqlDataAccess.grabUsername(auth);
+        String username = MySqlDataAccess.getUsername(auth);
         String gameString = MySqlDataAccess.grabGameByID(gameID);
         Gson gson = new Gson();
         ChessGame validGame = gson.fromJson(gameString, ChessGame.class);

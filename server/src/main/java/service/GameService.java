@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
 import model.GameData;

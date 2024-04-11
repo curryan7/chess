@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import webSocketMessages.userCommands.commandModels.*;
 
 
-
+@WebSocket
 public class WebsocketHandler {
     private static final ConnectionManager connections = new ConnectionManager();
     @OnWebSocketMessage
@@ -22,14 +22,19 @@ public class WebsocketHandler {
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
                 joinGameWS(session, message);
+                break;
             case JOIN_OBSERVER:
-                System.out.println("sad");
+                joinObserver(session, message);
+                break;
             case MAKE_MOVE:
                 System.out.println("moved");
+                break;
             case LEAVE:
                 System.out.println("left");
+                break;
             case RESIGN:
                 System.out.println("resigned");
+                break;
         }
     }
 
@@ -40,13 +45,25 @@ public class WebsocketHandler {
 
         String colorString = color.toString();
         String auth = focusPlayer.getAuthString();
+        connections.add(auth, session, gameID, colorString);
+
+        loadGame(gameID, session, colorString);
+    }
+
+    public static void joinObserver (Session session, String message) throws SQLException, DataAccessException, IOException {
+        joinObserver focusObserver = new Gson().fromJson(message, joinObserver.class);
+        int gameID = focusObserver.getGameID();
+        String auth = focusObserver.getAuthString();
+        connections.add(auth, session, gameID, null);
+        loadGame(gameID,session, null);
+    }
+
+    public static void loadGame (int gameID, Session session, String color) throws IOException, SQLException, DataAccessException {
         String gameString = MySqlDataAccess.grabGameByID(gameID);
         Gson gson = new Gson();
         ChessGame validGame = gson.fromJson(gameString, ChessGame.class);
         loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, validGame);
-        connections.add(auth, session, gameID, colorString);
         session.getRemote().sendString(gson.toJson(gotGame));
     }
-
 
 }

@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
 import model.*;
@@ -9,6 +10,7 @@ import com.google.gson.Gson;
 import service.ClearService;
 import service.UserService;
 import service.GameService;
+import webSocket.WebsocketHandler;
 
 import java.sql.SQLException;
 
@@ -19,7 +21,7 @@ public class Server {
 
 
         Spark.staticFiles.location("web");
-
+        Spark.webSocket("/connect", WebsocketHandler.class);
         // clear database
         Spark.delete("/db", this::clear);
         // registration
@@ -145,7 +147,6 @@ public class Server {
         Gson gson = new Gson();
         MySqlDataAccess server = new MySqlDataAccess();
         GameData gameData = gson.fromJson(req.body(),GameData.class);
-
         String authTokenHeader = req.headers("authorization");
         if (authTokenHeader == null || authTokenHeader.isEmpty()){
             res.status(401);
