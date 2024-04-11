@@ -53,33 +53,39 @@ public class WebsocketHandler {
         GameData gameStuff = MySqlDataAccess.grabGameByID(gameID);
 
         //check what color the user is
-        switch (color) {
-            case ChessGame.TeamColor.WHITE:
-                // see if the username is matching
-                assert gameStuff != null;
-                if (Objects.equals(userName, gameStuff.whiteUsername())) {
-                    // if it is matching
 
-                    // let all the other players know that they are connecting/connected
-                    sessions.add(auth, session, gameID, colorString);
+        if (MySqlDataAccess.grabGameByID(gameID)!=null){
+            switch (color) {
+                case ChessGame.TeamColor.WHITE:
+                    // see if the username is matching
+                    assert gameStuff != null;
+                    if (Objects.equals(userName, gameStuff.whiteUsername())) {
+                        // if it is matching
 
-                    // get the game that they are about to play on
-                    loadGame(auth, gameID,session,colorString);
-                } else {
-                    //if it is not matching, then we send an error message
-                    sessions.bounce(auth, session, gameID, colorString);
-                }
-                break;
+                        // let all the other players know that they are connecting/connected
+                        sessions.add(auth, session, gameID, colorString);
 
-            case ChessGame.TeamColor.BLACK:
-                assert gameStuff != null;
-                if (Objects.equals(userName, gameStuff.blackUsername())) {
-                    sessions.add(auth, session, gameID, colorString);
-                    loadGame(auth, gameID,session,colorString);
-                } else {
-                    sessions.bounce(auth, session, gameID, colorString);
-                }
-                break;
+                        // get the game that they are about to play on
+                        loadGame(auth, gameID, session, colorString);
+                    } else {
+                        //if it is not matching, then we send an error message
+                        sessions.bounce(auth, session, gameID, colorString);
+                    }
+                    break;
+
+                case ChessGame.TeamColor.BLACK:
+                    assert gameStuff != null;
+                    if (Objects.equals(userName, gameStuff.blackUsername())) {
+                        sessions.add(auth, session, gameID, colorString);
+                        loadGame(auth, gameID, session, colorString);
+                    } else {
+                        sessions.bounce(auth, session, gameID, colorString);
+                    }
+                    break;
+            }
+        }
+        else{
+            sessions.bounce(auth, session, gameID, colorString);
         }
     }
 
