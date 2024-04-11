@@ -59,7 +59,11 @@ public class WebsocketHandler {
                 assert gameStuff != null;
                 if (Objects.equals(userName, gameStuff.whiteUsername())) {
                     // if it is matching
+
+                    // let all the other players know that they are connecting/connected
                     sessions.add(auth, session, gameID, colorString);
+
+                    // get the game that they are about to play on
                     loadGame(auth, gameID,session,colorString);
                 } else {
                     //if it is not matching, then we send an error message
@@ -92,6 +96,8 @@ public class WebsocketHandler {
         assert gameDat != null;
         ChessGame gameObject = gameDat.game();
         loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
-        session.getRemote().sendString(gotGame.toString());
+        Gson gson = new Gson();
+        String sendGame = gson.toJson(gotGame);
+        session.getRemote().sendString(sendGame);
     }
 }
