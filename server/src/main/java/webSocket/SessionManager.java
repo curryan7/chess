@@ -32,8 +32,6 @@ public class SessionManager {
         wideSession = currentSession;
 
         String username = MySqlDataAccess.getUsername(auth);
-//        GameData gameObject = MySqlDataAccess.grabGameByID(gameID);
-//        assert gameObject != null;
 
         Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as " + color);
         announce(addMessage, gameID);

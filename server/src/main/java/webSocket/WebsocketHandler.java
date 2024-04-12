@@ -53,7 +53,6 @@ public class WebsocketHandler {
         GameData gameStuff = MySqlDataAccess.grabGameByID(gameID);
 
         //check what color the user is
-
         if (MySqlDataAccess.grabGameByID(gameID)!=null){
             switch (color) {
                 case ChessGame.TeamColor.WHITE:
@@ -93,8 +92,16 @@ public class WebsocketHandler {
         joinObserver focusObserver = new Gson().fromJson(message, joinObserver.class);
         int gameID = focusObserver.getGameID();
         String auth = focusObserver.getAuthString();
-        sessions.add(auth, session, gameID, null);
-        loadGame(auth, gameID,session, null);
+
+
+        if (MySqlDataAccess.grabGameByID(gameID)==null || !MySqlDataAccess.verifyAuthToken(auth)){
+            sessions.bounce(auth, session, gameID, null);
+        }
+        else{
+            sessions.add(auth, session, gameID, null);
+            loadGame(auth, gameID,session, null);
+        }
+
     }
 
     public static void loadGame (String auth, int gameID, Session session, String color) throws IOException, SQLException, DataAccessException {
