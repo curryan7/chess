@@ -134,7 +134,6 @@ public class ChessGame {
             }
             throw new InvalidMoveException("no valid moves");
         }
-
         if (startPiece.getTeamColor()!=this.getTeamTurn()){
             throw new InvalidMoveException("not your turn");
         }

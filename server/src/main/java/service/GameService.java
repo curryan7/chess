@@ -1,6 +1,5 @@
 package service;
 
-import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
 import model.GameData;
@@ -64,7 +63,7 @@ public class GameService {
         if (verifyToken(token)) {
             if(verifyData(joinData)) {
                 if (MySqlDataAccess.verifyGameID(joinData.gameID())) {
-                    MySqlDataAccess.updateGame(joinData, token);
+                    MySqlDataAccess.joinGame(joinData, token);
                 }
                 else {
                     throw new DataAccessException("Error: bad request");

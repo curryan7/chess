@@ -273,6 +273,8 @@ public class MySqlDataAccess {
         if(Boolean.TRUE.equals(grabGame(gameName))){
             int gameID = rand.nextInt(500);
             ChessGame gameObject = new ChessGame();
+            gameObject.setTeamTurn(ChessGame.TeamColor.WHITE);
+            gameObject.getBoard().resetBoard();
             GameData finalGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameObject);
 
             Gson gson = new Gson();
@@ -322,7 +324,7 @@ public class MySqlDataAccess {
         return Objects.equals(data.playerColor(), "WHITE") || (Objects.equals(data.playerColor(), "BLACK") || data.playerColor() == null);
     }
 
-    public static void updateGame(JoinData joinData, String token) throws DataAccessException, SQLException {
+    public static void joinGame(JoinData joinData, String token) throws DataAccessException, SQLException {
         int gameID = joinData.gameID();
         try(var conn = DatabaseManager.getConnection()){
             var createGameStatement = """
@@ -374,6 +376,28 @@ public class MySqlDataAccess {
                     }
 
                 }
+            }
+        }
+    }
+
+    public static void updateBoard(String game, int gameID) throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var updateGameStatement = """
+                            SELECT whiteUserName, blackUserName, gameName, game FROM Games WHERE gameID=?
+                    """;
+            try (var grabGameStatement = conn.prepareStatement(updateGameStatement)) {
+                grabGameStatement.setInt(1, gameID);
+                ResultSet gameResult = grabGameStatement.executeQuery();
+                if (gameResult.next()) {
+                    String oldGame = gameResult.getString("game");
+                    try (var preparedStatement = conn.prepareStatement(
+                            "UPDATE Games SET game = ? WHERE GameID = ?")) {
+                        preparedStatement.setString(1, oldGame);
+                        preparedStatement.setInt(2, gameID);
+                        preparedStatement.executeUpdate();
+                    }
+                }
+
             }
         }
     }

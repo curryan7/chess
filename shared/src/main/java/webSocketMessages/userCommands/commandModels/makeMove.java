@@ -8,6 +8,18 @@ public class makeMove extends UserGameCommand {
     ChessMove move;
     CommandType command;
 
+    public int getGameID() {
+        return gameID;
+    }
+
+    public ChessMove getMove() {
+        return move;
+    }
+
+    public CommandType getCommand() {
+        return command;
+    }
+
     public makeMove(String authToken, int gameID, ChessMove move) {
         super(authToken);
         this.gameID = gameID;

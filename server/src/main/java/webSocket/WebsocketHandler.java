@@ -1,5 +1,7 @@
 package webSocket;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
@@ -7,6 +9,7 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.serverMessages.ServerMessageModels.Notification;
 import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 import webSocketMessages.userCommands.*;
 import java.io.IOException;
@@ -20,7 +23,7 @@ import webSocketMessages.userCommands.commandModels.*;
 public class WebsocketHandler {
     private static final SessionManager sessions = new SessionManager();
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, SQLException, DataAccessException {
+    public void onMessage(Session session, String message) throws IOException, SQLException, DataAccessException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
@@ -30,7 +33,7 @@ public class WebsocketHandler {
                 joinObserver(session, message);
                 break;
             case MAKE_MOVE:
-                System.out.println("moved");
+                makeMove(session, message);
                 break;
             case LEAVE:
                 System.out.println("left");
@@ -39,6 +42,12 @@ public class WebsocketHandler {
                 System.out.println("resigned");
                 break;
         }
+    }
+
+    static ChessGame.TeamColor wideColor;
+
+
+    public void setColor(String userData, GameData gameInfo){
     }
 
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
@@ -62,10 +71,11 @@ public class WebsocketHandler {
                         // if it is matching
 
                         // let all the other players know that they are connecting/connected
-                        sessions.add(auth, session, gameID, colorString);
+                        sessions.add(focusPlayer.getCommandType(),auth, session, gameID, colorString);
 
                         // get the game that they are about to play on
-                        loadGame(auth, gameID, session, colorString);
+                        loadNewGame(auth, gameID, session);
+                        wideColor = ChessGame.TeamColor.WHITE;
                     } else {
                         //if it is not matching, then we send an error message
                         sessions.bounce(auth, session, gameID, colorString);
@@ -75,8 +85,9 @@ public class WebsocketHandler {
                 case ChessGame.TeamColor.BLACK:
                     assert gameStuff != null;
                     if (Objects.equals(userName, gameStuff.blackUsername())) {
-                        sessions.add(auth, session, gameID, colorString);
-                        loadGame(auth, gameID, session, colorString);
+                        sessions.add(focusPlayer.getCommandType(),auth, session, gameID, colorString);
+                        loadNewGame(auth,gameID, session);
+                        wideColor = ChessGame.TeamColor.BLACK;
                     } else {
                         sessions.bounce(auth, session, gameID, colorString);
                     }
@@ -98,13 +109,51 @@ public class WebsocketHandler {
             sessions.bounce(auth, session, gameID, null);
         }
         else{
-            sessions.add(auth, session, gameID, null);
-            loadGame(auth, gameID,session, null);
+            sessions.add(focusObserver.getCommandType(),auth, session, gameID, null);
+            loadNewGame(auth,gameID,session);
         }
 
     }
 
-    public static void loadGame (String auth, int gameID, Session session, String color) throws IOException, SQLException, DataAccessException {
+    public static void makeMove (Session session, String message) throws SQLException, DataAccessException, InvalidMoveException, IOException {
+
+        switch(wideColor.toString()){
+            case "black":
+                wideColor = ChessGame.TeamColor.WHITE;
+                break;
+            case "white":
+                wideColor = ChessGame.TeamColor.BLACK;
+                break;
+        }
+
+        makeMove moveData = new Gson().fromJson(message, makeMove.class);
+        String auth = moveData.getAuthString();
+        int gameID = moveData.getGameID();
+        ChessMove madeMove = moveData.getMove();
+        GameData gotGame = MySqlDataAccess.grabGameByID(moveData.getGameID());
+        assert gotGame != null;
+        ChessGame gameObject =gotGame.game();
+        try {
+//            gameObject.setTeamTurn(wideColor);
+            gameObject.makeMove(madeMove);
+//            System.out.println(wideColor);
+
+            Gson gson = new Gson();
+
+            String gameString = gson.toJson(gameObject);
+
+            MySqlDataAccess.updateBoard(gameString,gameID);
+
+            loadGame(auth, gameID,session);
+            Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, wideColor.toString()+ "moved a piece");
+            sessions.announce(session,addMessage,gameID);
+        }
+        catch (InvalidMoveException e){
+            sessions.bounce(auth,session, gameID, null);
+        }
+
+    }
+    public static void loadNewGame(String auth, int gameID, Session session) throws IOException, SQLException, DataAccessException {
         GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
         assert gameDat != null;
         ChessGame gameObject = gameDat.game();
@@ -113,4 +162,18 @@ public class WebsocketHandler {
         String sendGame = gson.toJson(gotGame);
         session.getRemote().sendString(sendGame);
     }
+
+    public static void loadGame(String auth, int gameID, Session session) throws SQLException, DataAccessException, IOException {
+        GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
+        assert gameDat != null;
+        ChessGame gameObject = gameDat.game();
+        loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+        Gson gson = new Gson();
+        String sendGame = gson.toJson(gotGame);
+//        session.getRemote().sendString(sendGame);
+        sessions.announce(session, gotGame,gameID);
+//        sessions.announce(session, gotGame,gameID);
+
+    }
+
 }

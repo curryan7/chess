@@ -1,5 +1,6 @@
 package webSocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
@@ -8,65 +9,84 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.serverMessages.ServerMessageModels.Error;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
+import webSocketMessages.userCommands.UserGameCommand;
 
 public class SessionManager {
-    Session wideSession;
+//    Session wideSession;
     public final ConcurrentHashMap<Integer, Vector<Session>> sessions = new ConcurrentHashMap<>();
 
-    public void add(String auth, Session currentSession, int gameID, String color) throws SQLException, DataAccessException, IOException {
+    public void add(UserGameCommand.CommandType modelType, String auth, Session currentSession, int gameID, String color) throws SQLException, DataAccessException, IOException {
 
-        if (sessions.get(gameID)!=null){
+        if (sessions.get(gameID) != null) {
             Vector<Session> edit = sessions.get(gameID);
             edit.add(currentSession);
-        }
-        else{
-            Vector<Session> edit = new Vector<Session>( 200);
+        } else {
+            Vector<Session> edit = new Vector<Session>(200);
             edit.add(currentSession);
             sessions.put(gameID, edit);
         }
-        wideSession = currentSession;
+//        wideSession = currentSession;
 
         String username = MySqlDataAccess.getUsername(auth);
-
-        Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as " + color);
-        announce(addMessage, gameID);
-
+        switch (modelType) {
+            case JOIN_OBSERVER, JOIN_PLAYER:
+                Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as " + color);
+                announce(currentSession, addMessage, gameID);
+                break;
+            case MAKE_MOVE:
+                Notification moveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has moved a piece");
+                announce(currentSession, moveMessage, gameID);
+                GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
+                assert gameDat != null;
+                ChessGame gameObject = gameDat.game();
+                loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+                announce(currentSession, gotGame, gameID);
+                break;
+        }
     }
 
     public void bounce(String auth, Session currentSession, int gameID, String color) throws IOException {
-//        Connection connection = new Connection(auth, session);
-        Vector<Session> edit = new Vector<Session>( 200);
+        Vector<Session> edit = new Vector<Session>(200);
         edit.add(currentSession);
         sessions.put(gameID, edit);
         Error errorMessage = new Error(ServerMessage.ServerMessageType.ERROR, "ERROR: Color already taken");
-        announce(errorMessage, gameID);
-//        wideSession = currentSession;
+        announce(currentSession, errorMessage, gameID);
+
     }
 
-    public void announce(ServerMessage message, int gameID) throws IOException {
+    public void announce(Session session, ServerMessage message, int gameID) throws IOException {
         Vector<Session> sessionsVector = sessions.get(gameID);
 
         Gson gson = new Gson();
         String formattedMessage = gson.toJson(message);
 
-        for (Session sesh:sessionsVector){
-            if (sesh != wideSession){
-                sesh.getRemote().sendString(formattedMessage);
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            for (Session sesh : sessionsVector){
+                if (sesh != session) {
+                    sesh.getRemote().sendString(formattedMessage);
+                }
             }
-            else if (message.getServerMessageType()==ServerMessage.ServerMessageType.LOAD_GAME){
-                wideSession.getRemote().sendString(formattedMessage);
+        }
+        else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            String sendGame = gson.toJson(message);
+
+            for (Session lSesh : sessionsVector) {
+                try {
+                    lSesh.getRemote().sendString(sendGame);
+                }
+                catch (IOException e){
+                    System.out.println("error");
+                }
             }
-            else if (message.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
-//                if(sesh == wideSession){
-                    wideSession.getRemote().sendString(formattedMessage);
-//                }
+        }
+        else if (message.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
+                    session.getRemote().sendString(formattedMessage);
             }
         }
 
     }
-}
