@@ -47,6 +47,7 @@ public class WebsocketHandler {
     static ChessGame.TeamColor wideColor;
     static ChessGame.TeamColor otherColor;
     static boolean gameFinished= false;
+    static boolean resignToken = false;
 
 
     public static void setColor(String userName, GameData gameInfo){
@@ -222,9 +223,9 @@ public class WebsocketHandler {
         setColor(username, gameObject);
 
 
+        if (!resignToken){
+            resignToken = true;
 
-        if (!gameFinished){
-            gameFinished = true;
             Notification resignationMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned");
             sessions.announce(session, resignationMessage,gameID);
             session.getRemote().sendString(new Gson().toJson(resignationMessage));
@@ -252,7 +253,6 @@ public class WebsocketHandler {
         catch (Exception e){
             Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
             sessions.announce(session,leaveMessage,gameID);
-
         }
 
 
