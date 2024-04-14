@@ -47,7 +47,6 @@ public class WebsocketHandler {
     static boolean gameFinished= false;
     static boolean resignToken = false;
 
-
     public static void setColor(String userName, GameData gameInfo){
         if (Objects.equals(userName, gameInfo.whiteUsername())) {
             wideColor = ChessGame.TeamColor.WHITE;
@@ -62,7 +61,6 @@ public class WebsocketHandler {
     public static Boolean isObserver(String userName, GameData gameInfo){
         return !Objects.equals(userName, gameInfo.blackUsername()) && !Objects.equals(userName, gameInfo.whiteUsername());
     }
-
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
         JoinPlayer focusPlayer = new Gson().fromJson(message, JoinPlayer.class);
         int gameID = focusPlayer.getGameID();
@@ -224,11 +222,6 @@ public class WebsocketHandler {
         assert gameObject != null;
         setColor(username, gameObject);
 
-        System.out.println(username);
-        System.out.println(gameObject.whiteUsername());
-        System.out.println(gameObject.blackUsername());
-        System.out.println(isObserver(username, gameObject));
-
 
         if (!resignToken && !isObserver(username, gameObject)){
             resignToken = true;
@@ -262,6 +255,6 @@ public class WebsocketHandler {
             Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
             sessions.announce(session,leaveMessage,gameID);
         }
-        
+
     }
 }

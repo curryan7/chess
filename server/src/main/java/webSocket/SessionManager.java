@@ -52,13 +52,13 @@ public class SessionManager {
             Vector<Session> sessionsVector = sessions.get(gameID);
             sessionsVector.remove(currentSession);
     }
+
     public void bounce(String auth, Session currentSession, int gameID, String color) throws IOException {
         Vector<Session> edit = new Vector<Session>(200);
         edit.add(currentSession);
         sessions.put(gameID, edit);
         Error errorMessage = new Error(ServerMessage.ServerMessageType.ERROR, "ERROR: Color already taken");
         announce(currentSession, errorMessage, gameID);
-
     }
 
     public void announce(Session session, ServerMessage message, int gameID) throws IOException {
@@ -74,6 +74,7 @@ public class SessionManager {
                 }
             }
         }
+
         else if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             String sendGame = gson.toJson(message);
 
@@ -88,7 +89,6 @@ public class SessionManager {
         }
         else if (message.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
                     session.getRemote().sendString(formattedMessage);
-            }
         }
-
     }
+}
