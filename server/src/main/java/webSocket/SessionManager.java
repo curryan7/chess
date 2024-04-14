@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
+import webSocketMessages.serverMessages.ServerMessageModels.LoadGame;
 import webSocketMessages.userCommands.UserGameCommand;
 
 public class SessionManager {
@@ -42,7 +42,7 @@ public class SessionManager {
                 GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
                 assert gameDat != null;
                 ChessGame gameObject = gameDat.game();
-                loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+                LoadGame gotGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
                 announce(currentSession, gotGame, gameID);
                 break;
         }

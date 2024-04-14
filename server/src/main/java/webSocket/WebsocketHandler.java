@@ -7,12 +7,10 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.serverMessages.ServerMessageModels.Error;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
-import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
+import webSocketMessages.serverMessages.ServerMessageModels.LoadGame;
 import webSocketMessages.userCommands.*;
 import java.io.IOException;
-import java.security.spec.ECField;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -66,7 +64,7 @@ public class WebsocketHandler {
     }
 
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
-        joinPlayer focusPlayer = new Gson().fromJson(message, joinPlayer.class);
+        JoinPlayer focusPlayer = new Gson().fromJson(message, JoinPlayer.class);
         int gameID = focusPlayer.getGameID();
         ChessGame.TeamColor color = focusPlayer.getPlayerColor();
         String colorString = color.toString();
@@ -115,7 +113,7 @@ public class WebsocketHandler {
     }
 
     public static void joinObserver (Session session, String message) throws SQLException, DataAccessException, IOException {
-        joinObserver focusObserver = new Gson().fromJson(message, joinObserver.class);
+        JoinObserver focusObserver = new Gson().fromJson(message, JoinObserver.class);
         int gameID = focusObserver.getGameID();
         String auth = focusObserver.getAuthString();
 
@@ -133,7 +131,7 @@ public class WebsocketHandler {
     public static void makeMove (Session session, String message) throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
 
-        makeMove moveData = new Gson().fromJson(message, makeMove.class);
+        MakeMove moveData = new Gson().fromJson(message, MakeMove.class);
         String auth = moveData.getAuthString();
         int gameID = moveData.getGameID();
         ChessMove madeMove = moveData.getMove();
@@ -193,7 +191,7 @@ public class WebsocketHandler {
         GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
         assert gameDat != null;
         ChessGame gameObject = gameDat.game();
-        loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+        LoadGame gotGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
         Gson gson = new Gson();
         String sendGame = gson.toJson(gotGame);
         session.getRemote().sendString(sendGame);
@@ -203,7 +201,7 @@ public class WebsocketHandler {
         GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
         assert gameDat != null;
         ChessGame gameObject = gameDat.game();
-        loadGame gotGame = new loadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+        LoadGame gotGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
         Gson gson = new Gson();
         String sendGame = gson.toJson(gotGame);
 //        session.getRemote().sendString(sendGame);
@@ -214,7 +212,7 @@ public class WebsocketHandler {
 
     public static void resign(Session session, String message) throws SQLException, DataAccessException, IOException {
 
-        resignRequest resignationObject = new Gson().fromJson(message, resignRequest.class);
+        ResignRequest resignationObject = new Gson().fromJson(message, ResignRequest.class);
         String auth = resignationObject.getAuthString();
         int gameID = resignationObject.getGameID();
         String username = MySqlDataAccess.getUsername(auth);
@@ -236,7 +234,7 @@ public class WebsocketHandler {
     }
 
     public static void leave (Session session, String message) throws SQLException, DataAccessException, IOException {
-        leaveRequest leaver = new Gson().fromJson(message, leaveRequest.class);
+        LeaveRequest leaver = new Gson().fromJson(message, LeaveRequest.class);
         String auth = leaver.getAuthString();
         int gameID = leaver.getGameID();
         String username = MySqlDataAccess.getUsername(auth);

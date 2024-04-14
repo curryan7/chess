@@ -1,29 +1,22 @@
 package webSocketMessages.userCommands.commandModels;
 
-import chess.ChessMove;
 import webSocketMessages.userCommands.UserGameCommand;
 
-public class makeMove extends UserGameCommand {
+public class JoinObserver extends UserGameCommand {
     int gameID;
-    ChessMove move;
     CommandType command;
 
     public int getGameID() {
         return gameID;
     }
 
-    public ChessMove getMove() {
-        return move;
-    }
-
     public CommandType getCommand() {
         return command;
     }
 
-    public makeMove(String authToken, int gameID, ChessMove move) {
-        super(authToken);
+    public JoinObserver(String auth, int gameID) {
+        super(auth);
         this.gameID = gameID;
-        this.move = move;
-        this.command= CommandType.MAKE_MOVE;
+        this.command = CommandType.JOIN_OBSERVER;
     }
 }

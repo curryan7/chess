@@ -1,6 +1,6 @@
 package ui;
 import com.google.gson.Gson;
-import webSocketMessages.userCommands.commandModels.leaveRequest;
+import webSocketMessages.userCommands.commandModels.LeaveRequest;
 
 public class InGameUI {
     // initialize the server
@@ -9,7 +9,7 @@ public class InGameUI {
     // print out the message to the user
     // public static void draw(String... params){
     public static String leaveGame(String...params) throws ResponseException {
-        leaveRequest lRequest = new leaveRequest(PostLoginUI.authToken, PostLoginUI.wideGameID);
+        LeaveRequest lRequest = new LeaveRequest(PostLoginUI.authToken, PostLoginUI.wideGameID);
         Gson gson = new Gson();
         gson.toJson(lRequest);
         // ^ send to handler

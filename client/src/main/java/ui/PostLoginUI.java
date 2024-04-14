@@ -68,7 +68,7 @@ public class PostLoginUI {
                 widePlayerColor = ChessGame.TeamColor.WHITE;
                 PreLoginUI.state = UIState.IN_GAME;
 
-                wsFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
+                WSFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
             }
 
             else if(Objects.equals(playerColor, ".")){
@@ -88,7 +88,7 @@ public class PostLoginUI {
                 widePlayerColor = ChessGame.TeamColor.BLACK;
                 PreLoginUI.state = UIState.IN_GAME;
 
-                wsFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
+                WSFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
             }
         }
         throw new ResponseException(400, "Bad Request");

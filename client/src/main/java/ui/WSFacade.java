@@ -8,10 +8,10 @@ import java.net.URI;
 
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
-import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
-import webSocketMessages.userCommands.commandModels.joinPlayer;
+import webSocketMessages.serverMessages.ServerMessageModels.LoadGame;
+import webSocketMessages.userCommands.commandModels.JoinPlayer;
 
-public class wsFacade extends Endpoint{
+public class WSFacade extends Endpoint{
     // receive message from InGameUI
     // package the message properly into the correct datatype
     // convert the object into JSON
@@ -21,7 +21,7 @@ public class wsFacade extends Endpoint{
 
     public static Session session;
 
-    public wsFacade() throws Exception {
+    public WSFacade() throws Exception {
         URI uri = new URI("ws://localhost:8080/connect");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         session = container.connectToServer(this, uri);
@@ -38,7 +38,7 @@ public class wsFacade extends Endpoint{
                         Error error = gson.fromJson(message, Error.class);
                         processError(error);
                     case LOAD_GAME:
-                        loadGame loader = gson.fromJson(message, loadGame.class);
+                        LoadGame loader = gson.fromJson(message, LoadGame.class);
                         processLoad(loader);
                 }
             }
@@ -46,7 +46,7 @@ public class wsFacade extends Endpoint{
     }
 
     public static void joinGame(String auth, int gameID, ChessGame.TeamColor color) throws Exception {
-        joinPlayer joinRequest = new joinPlayer(auth, gameID, color);
+        JoinPlayer joinRequest = new JoinPlayer(auth, gameID, color);
         Gson gson = new Gson();
         send(gson.toJson(joinRequest));
     }
@@ -61,7 +61,7 @@ public class wsFacade extends Endpoint{
         System.out.println(error);
     }
 
-    public static void processLoad(loadGame message){
+    public static void processLoad(LoadGame message){
         ChessGame game = message.getGame();
         ChessDesign.setGame(game);
         ChessDesign.game.setBoard(game.getBoard());

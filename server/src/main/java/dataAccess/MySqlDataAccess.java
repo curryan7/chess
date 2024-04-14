@@ -159,12 +159,12 @@ public class MySqlDataAccess {
             var createUserStatement = """
                             INSERT INTO Users (username, password, email) VALUES (?, ?, ?)
                     """;
-            try (var UInsertStatement = conn.prepareStatement(createUserStatement, Statement.RETURN_GENERATED_KEYS)) {
-                UInsertStatement.setString(1, uname);
-                UInsertStatement.setString(2, pword);
-                UInsertStatement.setString(3, mail);
+            try (var uInsertStatement = conn.prepareStatement(createUserStatement, Statement.RETURN_GENERATED_KEYS)) {
+                uInsertStatement.setString(1, uname);
+                uInsertStatement.setString(2, pword);
+                uInsertStatement.setString(3, mail);
 
-                return UInsertStatement.executeUpdate() != 0;
+                return uInsertStatement.executeUpdate() != 0;
 
             }
 
@@ -251,14 +251,14 @@ public class MySqlDataAccess {
             try (var grabPasswordStatement = conn.prepareStatement(createAuthStatement)) {
                 ResultSet gamesResult = grabPasswordStatement.executeQuery();
                 while (gamesResult.next()) {
-                    int GameID = gamesResult.getInt("GameID");
+                    int gameID = gamesResult.getInt("GameID");
                     String whiteUsername = gamesResult.getString("whiteUserName");
                     String blackUsername = gamesResult.getString("blackUserName");
                     String gameName = gamesResult.getString("gameName");
                     String pregame = gamesResult.getString("game");
                     Gson gson = new Gson();
                     ChessGame game = gson.fromJson(pregame, ChessGame.class);
-                    GameData gameObject = new GameData(GameID, whiteUsername, blackUsername, gameName, game);
+                    GameData gameObject = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
                     gameList.add(gameObject);
                 }
                 return gameList;
@@ -284,14 +284,14 @@ public class MySqlDataAccess {
                 var createUserStatement = """
                             INSERT INTO Games (GameID, whiteUserName, blackUserName, gameName, game) VALUES (?, ?, ?, ?, ?)
                     """;
-                try (var GameInsertStatement = conn.prepareStatement(createUserStatement)) {
-                    GameInsertStatement.setInt(1, gameID);
-                    GameInsertStatement.setString(2, finalGameData.whiteUsername());
-                    GameInsertStatement.setString(3, finalGameData.blackUsername());
-                    GameInsertStatement.setString(4, finalGameData.gameName());
-                    GameInsertStatement.setString(5, gameString);
+                try (var gameInsertStatement = conn.prepareStatement(createUserStatement)) {
+                    gameInsertStatement.setInt(1, gameID);
+                    gameInsertStatement.setString(2, finalGameData.whiteUsername());
+                    gameInsertStatement.setString(3, finalGameData.blackUsername());
+                    gameInsertStatement.setString(4, finalGameData.gameName());
+                    gameInsertStatement.setString(5, gameString);
 
-                    GameInsertStatement.executeUpdate();
+                    gameInsertStatement.executeUpdate();
                     return finalGameData;
                 }
             } catch (SQLException | DataAccessException e) {

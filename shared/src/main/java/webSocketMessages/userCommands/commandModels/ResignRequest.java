@@ -2,7 +2,7 @@ package webSocketMessages.userCommands.commandModels;
 
 import webSocketMessages.userCommands.UserGameCommand;
 
-public class leaveRequest extends UserGameCommand {
+public class ResignRequest extends UserGameCommand {
     int gameID;
     CommandType command;
 
@@ -14,9 +14,9 @@ public class leaveRequest extends UserGameCommand {
         return command;
     }
 
-    public leaveRequest(String authToken, int gameID) {
+    public ResignRequest(String authToken, int gameID) {
         super(authToken);
         this.gameID = gameID;
-        this.command = CommandType.LEAVE;
+        this.command = CommandType.RESIGN;
     }
 }
