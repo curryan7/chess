@@ -130,10 +130,6 @@ public class WebsocketHandler {
         ChessMove madeMove = moveData.getMove();
         GameData gotGame = MySqlDataAccess.grabGameByID(moveData.getGameID());
 
-        String userName = MySqlDataAccess.getUsername(auth);
-        assert gotGame != null;
-        setColor(userName, gotGame);
-
 //        ChessPosition positionInQuestion = madeMove.getStartPosition();
 //        ChessPiece pieceInQuestion = gotGame.game().getBoard().getPiece(positionInQuestion);
 //
@@ -141,8 +137,27 @@ public class WebsocketHandler {
 //            sessions.bounce(auth,session,gameID,wideColor.toString());
 //        }
 
+        assert gotGame != null;
         ChessGame gameObject =gotGame.game();
         try {
+
+            String userName = MySqlDataAccess.getUsername(auth);
+            setColor(userName, gotGame);
+            
+
+            String turn = gotGame.game().getTeamTurn().toString();
+
+            if(!Objects.equals(wideColor.toString(), turn)){
+                throw new InvalidMoveException();
+            }
+
+
+
+
+            if (!gotGame.game().validMoves(madeMove.getStartPosition()).contains(madeMove)){
+                throw new InvalidMoveException();
+
+            }
             gameObject.makeMove(madeMove);
 
             Gson gson = new Gson();
