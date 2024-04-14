@@ -60,7 +60,7 @@ public class WebsocketHandler {
     }
 
     public static Boolean isObserver(String userName, GameData gameInfo){
-        return !Objects.equals(userName, gameInfo.blackUsername()) || !Objects.equals(userName, gameInfo.whiteUsername());
+        return !Objects.equals(userName, gameInfo.blackUsername()) && !Objects.equals(userName, gameInfo.whiteUsername());
     }
 
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
@@ -89,6 +89,8 @@ public class WebsocketHandler {
                         // get the game that they are about to play on
                         loadNewGame(auth, gameID, session);
                         wideColor = ChessGame.TeamColor.WHITE;
+                        gameFinished = false;
+                        resignToken = false;
                     } else {
                         //if it is not matching, then we send an error message
                         sessions.bounce(auth, session, gameID, colorString);
@@ -101,6 +103,8 @@ public class WebsocketHandler {
                         sessions.add(focusPlayer.getCommandType(),auth, session, gameID, colorString);
                         loadNewGame(auth,gameID, session);
                         wideColor = ChessGame.TeamColor.BLACK;
+                        gameFinished = false;
+                        resignToken = false;
                     } else {
                         sessions.bounce(auth, session, gameID, colorString);
                     }
@@ -220,9 +224,15 @@ public class WebsocketHandler {
         assert gameObject != null;
         setColor(username, gameObject);
 
+        System.out.println(username);
+        System.out.println(gameObject.whiteUsername());
+        System.out.println(gameObject.blackUsername());
+        System.out.println(isObserver(username, gameObject));
 
-        if (!resignToken){
+
+        if (!resignToken && !isObserver(username, gameObject)){
             resignToken = true;
+            gameFinished = true;
 
             Notification resignationMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned");
             sessions.announce(session, resignationMessage,gameID);
@@ -252,11 +262,6 @@ public class WebsocketHandler {
             Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
             sessions.announce(session,leaveMessage,gameID);
         }
-
-
-
-
-
-
+        
     }
 }
