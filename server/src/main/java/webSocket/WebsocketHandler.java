@@ -7,10 +7,12 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.serverMessages.ServerMessageModels.Error;
 import webSocketMessages.serverMessages.ServerMessageModels.Notification;
 import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 import webSocketMessages.userCommands.*;
 import java.io.IOException;
+import java.security.spec.ECField;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -34,16 +36,17 @@ public class WebsocketHandler {
                 makeMove(session, message);
                 break;
             case LEAVE:
-                System.out.println("left");
+                leave(session, message);
                 break;
             case RESIGN:
-                System.out.println("resigned");
+                resign(session, message);
                 break;
         }
     }
 
     static ChessGame.TeamColor wideColor;
     static ChessGame.TeamColor otherColor;
+    static boolean gameFinished= false;
 
 
     public static void setColor(String userName, GameData gameInfo){
@@ -55,6 +58,10 @@ public class WebsocketHandler {
             wideColor = ChessGame.TeamColor.BLACK;
             otherColor = ChessGame.TeamColor.WHITE;
         }
+    }
+
+    public static Boolean isObserver(String userName, GameData gameInfo){
+        return !Objects.equals(userName, gameInfo.blackUsername()) || !Objects.equals(userName, gameInfo.whiteUsername());
     }
 
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
@@ -124,57 +131,63 @@ public class WebsocketHandler {
 
     public static void makeMove (Session session, String message) throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
+
         makeMove moveData = new Gson().fromJson(message, makeMove.class);
         String auth = moveData.getAuthString();
         int gameID = moveData.getGameID();
         ChessMove madeMove = moveData.getMove();
         GameData gotGame = MySqlDataAccess.grabGameByID(moveData.getGameID());
 
-//        ChessPosition positionInQuestion = madeMove.getStartPosition();
-//        ChessPiece pieceInQuestion = gotGame.game().getBoard().getPiece(positionInQuestion);
-//
-//        if (wideColor != gotGame.game().getTeamTurn() || pieceInQuestion.getTeamColor()!= wideColor){
-//            sessions.bounce(auth,session,gameID,wideColor.toString());
-//        }
-
         assert gotGame != null;
         ChessGame gameObject =gotGame.game();
-        try {
 
-            String userName = MySqlDataAccess.getUsername(auth);
-            setColor(userName, gotGame);
-            
 
-            String turn = gotGame.game().getTeamTurn().toString();
+        // to make a move
+        // you need to make sure that the piece color and player color is the same x
+        // make sure that the move is valid x
+        // make sure that the game has not finished already x
+        // make sure that the observer is not trying to move any pieces
 
-            if(!Objects.equals(wideColor.toString(), turn)){
-                throw new InvalidMoveException();
+            try {
+                String userName = MySqlDataAccess.getUsername(auth);
+                setColor(userName, gotGame);
+                ChessGame.TeamColor turn = gotGame.game().getTeamTurn();
+                ChessPosition startPosition = madeMove.getStartPosition();
+
+                ChessGame.TeamColor pieceColor = gotGame.game().getBoard().getPiece(startPosition).getTeamColor();
+
+                if (wideColor != pieceColor){
+                    throw new InvalidMoveException();
+                }
+
+                if (!Objects.equals(userName, gotGame.whiteUsername()) && !Objects.equals(userName, gotGame.blackUsername().toString())){
+                    throw new InvalidMoveException();
+                }
+
+                if (gameFinished){
+                    throw new InvalidMoveException();
+                }
+
+
+                gameObject.makeMove(madeMove);
+                if (gotGame.game().isInCheckmate(wideColor) || gotGame.game().isInCheckmate(otherColor)|| gotGame.game().isInStalemate(wideColor)|| gotGame.game().isInStalemate(otherColor)){
+                    gameFinished = true;
+                }
+
+                Gson gson = new Gson();
+                String gameString = gson.toJson(gameObject);
+
+                MySqlDataAccess.updateBoard(gameString, gameID);
+
+                loadGame(auth, gameID, session);
+                Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, wideColor.toString() + "moved a piece");
+                sessions.announce(session, addMessage, gameID);
+
+            } catch (InvalidMoveException e) {
+                sessions.bounce(auth, session, gameID, null);
             }
-
-
-
-
-            if (!gotGame.game().validMoves(madeMove.getStartPosition()).contains(madeMove)){
-                throw new InvalidMoveException();
-
-            }
-            gameObject.makeMove(madeMove);
-
-            Gson gson = new Gson();
-
-            String gameString = gson.toJson(gameObject);
-
-            MySqlDataAccess.updateBoard(gameString,gameID);
-
-            loadGame(auth, gameID,session);
-            Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, wideColor.toString()+ "moved a piece");
-            sessions.announce(session,addMessage,gameID);
-        }
-        catch (InvalidMoveException e){
-            sessions.bounce(auth,session, gameID, null);
         }
 
-    }
     public static void loadNewGame(String auth, int gameID, Session session) throws IOException, SQLException, DataAccessException {
         GameData gameDat = MySqlDataAccess.grabGameByID(gameID);
         assert gameDat != null;
@@ -198,4 +211,54 @@ public class WebsocketHandler {
 
     }
 
+    public static void resign(Session session, String message) throws SQLException, DataAccessException, IOException {
+
+        resignRequest resignationObject = new Gson().fromJson(message, resignRequest.class);
+        String auth = resignationObject.getAuthString();
+        int gameID = resignationObject.getGameID();
+        String username = MySqlDataAccess.getUsername(auth);
+        GameData gameObject = MySqlDataAccess.grabGameByID(gameID);
+        assert gameObject != null;
+        setColor(username, gameObject);
+
+
+
+        if (!gameFinished){
+            gameFinished = true;
+            Notification resignationMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned");
+            sessions.announce(session, resignationMessage,gameID);
+            session.getRemote().sendString(new Gson().toJson(resignationMessage));
+        }
+        else {
+            sessions.bounce(auth,session,gameID,null);
+        }
+    }
+
+    public static void leave (Session session, String message) throws SQLException, DataAccessException, IOException {
+        leaveRequest leaver = new Gson().fromJson(message, leaveRequest.class);
+        String auth = leaver.getAuthString();
+        int gameID = leaver.getGameID();
+        String username = MySqlDataAccess.getUsername(auth);
+        GameData gotGame = MySqlDataAccess.grabGameByID(gameID);
+
+        assert gotGame != null;
+        setColor(username, gotGame);
+        try{
+            MySqlDataAccess.leaveGame(wideColor,null, gameID);
+            Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
+            sessions.announce(session,leaveMessage,gameID);
+            sessions.delete(session,gameID);
+        }
+        catch (Exception e){
+            Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
+            sessions.announce(session,leaveMessage,gameID);
+
+        }
+
+
+
+
+
+
+    }
 }

@@ -401,6 +401,43 @@ public class MySqlDataAccess {
             }
         }
     }
+
+    public static void leaveGame(ChessGame.TeamColor color, String username, int gameID) throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var leaveGameStatement = """
+                            SELECT whiteUserName, blackUserName, gameName, game FROM Games WHERE gameID=?
+                    """;
+            try (var grabGameStatement = conn.prepareStatement(leaveGameStatement)) {
+                grabGameStatement.setInt(1, gameID);
+                ResultSet gameResult = grabGameStatement.executeQuery();
+                if (gameResult.next()) {
+                    String oldGame = gameResult.getString("game");
+                    if (color == ChessGame.TeamColor.WHITE){
+                        try (var preparedStatement = conn.prepareStatement(
+                                "UPDATE Games SET whiteUserName = ? WHERE GameID = ?")) {
+                            preparedStatement.setString(1, username);
+                            preparedStatement.setInt(2, gameID);
+                            preparedStatement.executeUpdate();
+                        }
+                        catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else if (color == ChessGame.TeamColor.BLACK){
+                        try (var preparedStatement = conn.prepareStatement(
+                                "UPDATE Games SET blackUserName = ? WHERE GameID = ?")) {
+                            preparedStatement.setString(1, username);
+                            preparedStatement.setInt(2, gameID);
+                            preparedStatement.executeUpdate();
+                        }
+                        catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 

@@ -29,7 +29,6 @@ public class SessionManager {
             edit.add(currentSession);
             sessions.put(gameID, edit);
         }
-//        wideSession = currentSession;
 
         String username = MySqlDataAccess.getUsername(auth);
         switch (modelType) {
@@ -49,6 +48,10 @@ public class SessionManager {
         }
     }
 
+    public void delete(Session currentSession, int gameID){
+            Vector<Session> sessionsVector = sessions.get(gameID);
+            sessionsVector.remove(currentSession);
+    }
     public void bounce(String auth, Session currentSession, int gameID, String color) throws IOException {
         Vector<Session> edit = new Vector<Session>(200);
         edit.add(currentSession);
