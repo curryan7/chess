@@ -17,7 +17,6 @@ import webSocketMessages.serverMessages.ServerMessageModels.loadGame;
 import webSocketMessages.userCommands.UserGameCommand;
 
 public class SessionManager {
-//    Session wideSession;
     public final ConcurrentHashMap<Integer, Vector<Session>> sessions = new ConcurrentHashMap<>();
 
     public void add(UserGameCommand.CommandType modelType, String auth, Session currentSession, int gameID, String color) throws SQLException, DataAccessException, IOException {

@@ -1,7 +1,5 @@
 package webSocket;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySqlDataAccess;
@@ -45,9 +43,18 @@ public class WebsocketHandler {
     }
 
     static ChessGame.TeamColor wideColor;
+    static ChessGame.TeamColor otherColor;
 
 
-    public void setColor(String userData, GameData gameInfo){
+    public static void setColor(String userName, GameData gameInfo){
+        if (Objects.equals(userName, gameInfo.whiteUsername())) {
+            wideColor = ChessGame.TeamColor.WHITE;
+            otherColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            wideColor = ChessGame.TeamColor.BLACK;
+            otherColor = ChessGame.TeamColor.WHITE;
+        }
     }
 
     public static void joinGameWS (Session session, String message) throws SQLException, DataAccessException, IOException {
@@ -117,26 +124,26 @@ public class WebsocketHandler {
 
     public static void makeMove (Session session, String message) throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
-        switch(wideColor.toString()){
-            case "black":
-                wideColor = ChessGame.TeamColor.WHITE;
-                break;
-            case "white":
-                wideColor = ChessGame.TeamColor.BLACK;
-                break;
-        }
-
         makeMove moveData = new Gson().fromJson(message, makeMove.class);
         String auth = moveData.getAuthString();
         int gameID = moveData.getGameID();
         ChessMove madeMove = moveData.getMove();
         GameData gotGame = MySqlDataAccess.grabGameByID(moveData.getGameID());
+
+        String userName = MySqlDataAccess.getUsername(auth);
         assert gotGame != null;
+        setColor(userName, gotGame);
+
+//        ChessPosition positionInQuestion = madeMove.getStartPosition();
+//        ChessPiece pieceInQuestion = gotGame.game().getBoard().getPiece(positionInQuestion);
+//
+//        if (wideColor != gotGame.game().getTeamTurn() || pieceInQuestion.getTeamColor()!= wideColor){
+//            sessions.bounce(auth,session,gameID,wideColor.toString());
+//        }
+
         ChessGame gameObject =gotGame.game();
         try {
-//            gameObject.setTeamTurn(wideColor);
             gameObject.makeMove(madeMove);
-//            System.out.println(wideColor);
 
             Gson gson = new Gson();
 
