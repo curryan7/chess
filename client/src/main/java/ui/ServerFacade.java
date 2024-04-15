@@ -37,11 +37,6 @@ public class ServerFacade {
         return makeRequest("PUT", path, req, SuccessJoin.class, true);
     }
 
-//    public static SuccessJoin leaveGame(JoinData req) throws ResponseException {
-//        var path = "/game";
-//        return makeRequest("PUT", path, req, SuccessJoin.class, true);
-//    }
-
     public static GameCreationResult createGame(GameData req) throws ResponseException {
         var path = "/game";
         return makeRequest("POST", path, req, GameCreationResult.class, true);

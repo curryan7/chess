@@ -116,11 +116,6 @@ public class MySqlDataAccess {
             try (var grabGameStatement = conn.prepareStatement(statement)){
                 grabGameStatement.setString(1, gamename);
                 try (ResultSet gameResult = grabGameStatement.executeQuery()) {
-                    //                        int gID = gameResult.getInt("GameID");
-                    //                        String wUsername = gameResult.getString("whiteUsername");
-                    //                        String bUsername = gameResult.getString("blackUsername");
-                    //                        String gName = gameResult.getString("gameName");
-                    //                        String cGame = gameResult.getString("game");
                     return !gameResult.next();
                 }
             }
