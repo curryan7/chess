@@ -122,19 +122,13 @@ public class WebsocketHandler {
         int gameID = focusObserver.getGameID();
         String auth = focusObserver.getAuthString();
 
+
         if (MySqlDataAccess.grabGameByID(gameID)==null || !MySqlDataAccess.verifyAuthToken(auth)){
             sessions.bounce(auth, session, gameID, null);
         }
         else{
             sessions.add(focusObserver.getCommandType(),auth, session, gameID, null);
-            GameData focusGame = MySqlDataAccess.grabGameByID(gameID);
-            assert focusGame != null;
-            ChessGame gameObject = focusGame.game();
-            LoadGame gameSend = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
-            Gson gson = new Gson();
-            String gameString = gson.toJson(gameSend);
-            session.getRemote().sendString(gameString);
-//            loadNewGame(auth,gameID,session);
+            loadNewGame(auth,gameID,session);
         }
 
     }
