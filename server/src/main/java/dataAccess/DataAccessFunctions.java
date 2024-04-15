@@ -48,9 +48,6 @@ public class DataAccessFunctions {
         return authToken;
     }
 
-    public static Object getAuthToken(String username) {
-        return authTokens.get(username);
-    }
 
     public static Boolean verifyAuthToken(String token) {
         for(AuthData entry : authTokens.values()){

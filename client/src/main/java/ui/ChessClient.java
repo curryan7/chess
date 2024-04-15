@@ -34,11 +34,9 @@ public class ChessClient {
             }
             else {
                 return switch(cmd){
-//                    case "redraw" -> InGameUI.draw(params);
-//                    case "leave"-> InGameUI.leaveGame(params);
-//                    case "makemove"-> InGameUI.makeMove(params);
-//                    case "resign"-> InGameUI.resignGame(params);
-//                    case "highlightmoves"-> InGameUI.highlightMoves(params);
+                    case "leave"-> InGameUI.leaveGame();
+                    case "makemove"-> InGameUI.makeMove();
+                    case "resign"-> InGameUI.resignGame();
                     default -> Repl.help();
 
                 };

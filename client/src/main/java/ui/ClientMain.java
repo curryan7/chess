@@ -7,7 +7,6 @@ public class ClientMain {
             serverUrl = args[0];
         }
 
-
         new Repl(serverUrl).run();
     }
 

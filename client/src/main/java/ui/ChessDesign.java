@@ -308,19 +308,7 @@ public class ChessDesign {
         }
     }
 
-    private static ChessGame.TeamColor getPieceColor(ChessGame game, int row, int col){
-        ChessBoard board = game.getBoard();
-        ChessGame.TeamColor color = board.getPiece(new ChessPosition(row+1, col+1)).getTeamColor();
-        System.out.println(color);
-        return color;
-    }
 
-    private static ChessPiece.PieceType getSquarePiece(ChessGame game, int row, int col){
-        ChessBoard board = game.getBoard();
-        ChessPiece.PieceType piece = board.getPiece(new ChessPosition(row+1, col)).getPieceType();
-        System.out.println(piece);
-        return piece;
-    }
     private static void printHeaderText(PrintStream out, String coordinate) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);

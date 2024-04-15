@@ -1,6 +1,13 @@
 package ui;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
+import model.GameData;
+import model.GameList;
 import webSocketMessages.userCommands.commandModels.LeaveRequest;
+import webSocketMessages.userCommands.commandModels.ResignRequest;
+
+import java.util.ArrayList;
 
 public class InGameUI {
     // initialize the server
@@ -8,21 +15,44 @@ public class InGameUI {
     // receive message from the server
     // print out the message to the user
     // public static void draw(String... params){
-    public static String leaveGame(String...params) throws ResponseException {
-        LeaveRequest lRequest = new LeaveRequest(PostLoginUI.authToken, PostLoginUI.wideGameID);
-        Gson gson = new Gson();
-        gson.toJson(lRequest);
-        // ^ send to handler
-        return "Successfully joined as White Player\n";
-    }
-    public static void makeMove(String... params){
+    public static String leaveGame() throws Exception {
+        int gameID = PostLoginUI.wideGameID;
+        String auth = PostLoginUI.authToken;
+        WSFacade.leaveGame(auth, gameID);
 
-//        makeMove moveRequest = new makeMove(PostLoginUI.authToken, PostLoginUI.wideGameID, )
+        GameList gamelist = ServerFacade.listgames();
+        ArrayList<GameData> listOfGames = gamelist.games();
+        return "you left the game";
     }
-    public static void resignGame(String... params){
 
+    public static String makeMove(String... params) throws Exception {
+        if (params.length ==4) {
+            int start1 = Integer.parseInt(params[0]);
+            int start2 = Integer.parseInt(params[1]);
+            int end1 = Integer.parseInt(params[2]);
+            int end2 = Integer.parseInt(params[3]);
+
+            ChessPosition startPosition = new ChessPosition(start1,start2);
+            ChessPosition endPosition = new ChessPosition(end1, end2);
+
+            ChessMove moves = new ChessMove(startPosition, endPosition, null);
+            int gameID = PostLoginUI.wideGameID;
+            String auth = PostLoginUI.authToken;
+            WSFacade.makeMoves(auth, gameID, moves);
+
+            return "next player's turn";
+        }
+        return "enter a properly formatted move";
     }
-    public static void highlightMoves(String... params){
-
+    public static String resignGame() throws Exception {
+        int gameID = PostLoginUI.wideGameID;
+        String auth = PostLoginUI.authToken;
+        try {
+            WSFacade.resignGame(auth, gameID);
+            return "You have resigned";
+        }
+        catch (Exception e){
+            throw new Exception("resign unsuccessful");
+        }
     }
 }

@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessGame;
 import model.*;
+
+import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -86,7 +88,6 @@ public class PostLoginUI {
                 PreLoginUI.state = UIState.IN_GAME;
                 wideGameID = gameID;
                 widePlayerColor = ChessGame.TeamColor.BLACK;
-                PreLoginUI.state = UIState.IN_GAME;
 
                 WSFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
             }

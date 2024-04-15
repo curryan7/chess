@@ -22,7 +22,8 @@ public class WebsocketHandler {
     private static final SessionManager sessions = new SessionManager();
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, SQLException, DataAccessException, InvalidMoveException {
-        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+        Gson gson = new Gson();
+        UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
                 joinGameWS(session, message);
@@ -39,6 +40,8 @@ public class WebsocketHandler {
             case RESIGN:
                 resign(session, message);
                 break;
+            default:
+                System.out.println("shit");
         }
     }
 
@@ -119,13 +122,19 @@ public class WebsocketHandler {
         int gameID = focusObserver.getGameID();
         String auth = focusObserver.getAuthString();
 
-
         if (MySqlDataAccess.grabGameByID(gameID)==null || !MySqlDataAccess.verifyAuthToken(auth)){
             sessions.bounce(auth, session, gameID, null);
         }
         else{
             sessions.add(focusObserver.getCommandType(),auth, session, gameID, null);
-            loadNewGame(auth,gameID,session);
+            GameData focusGame = MySqlDataAccess.grabGameByID(gameID);
+            assert focusGame != null;
+            ChessGame gameObject = focusGame.game();
+            LoadGame gameSend = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameObject);
+            Gson gson = new Gson();
+            String gameString = gson.toJson(gameSend);
+            session.getRemote().sendString(gameString);
+//            loadNewGame(auth,gameID,session);
         }
 
     }
@@ -221,7 +230,6 @@ public class WebsocketHandler {
         GameData gameObject = MySqlDataAccess.grabGameByID(gameID);
         assert gameObject != null;
         setColor(username, gameObject);
-
 
         if (!resignToken && !isObserver(username, gameObject)){
             resignToken = true;
