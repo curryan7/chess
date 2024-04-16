@@ -20,9 +20,9 @@ public class PostLoginUI {
             ServerFacade.logout();
             ChessClient.authToken = null;
             PreLoginUI.state = UIState.PRE_LOGIN;
-            return "logout successful";
+            return "logout successful\n";
         }
-        throw new ResponseException(400, "Extra Fields");
+        throw new ResponseException(400, "Extra Fields\n");
     }
     public static String createGame(String... params) throws ResponseException {
         if(params.length == 1){
@@ -31,9 +31,9 @@ public class PostLoginUI {
             GameData createSend = new GameData(0, null, null, gameName, null);
             GameCreationResult createFinish = ServerFacade.createGame(createSend);
             int gameID = createFinish.gameID();
-            return "Game successfully created. Here is your gameID: "+ gameID;
+            return "Game successfully created. Here is your gameID: "+ gameID + "\n";
         }
-        throw new ResponseException(400, "Error: Fields are incorrect");
+        throw new ResponseException(400, "Error: Fields are incorrect\n");
     }
     public static String listGames (String... params) throws ResponseException {
         if(params.length==0){
@@ -49,20 +49,20 @@ public class PostLoginUI {
                 String bName = game.blackUsername();
                 System.out.println(i+")|| Game Name:" + name + "|| White:" + wName + " || Black: "+ bName +" || GameID: " + gameID +"\n");
             }
-            return "--end of games list--";
+            return "--end of games list--\n";
 
         }
-        throw new ResponseException(400, "Bad Fields");
+        throw new ResponseException(400, "Bad Fields\n");
     }
     public static String joinGame (String... params) throws Exception {
-        if(params.length == 2){
+        if (params.length == 2) {
             String playerColor = params[0];
             String sGameNum = params[1];
-            int gameNum = Integer.parseInt(sGameNum)-1;
+            int gameNum = Integer.parseInt(sGameNum) - 1;
             GameData subjectGame = wideListOfGames.get(gameNum);
             int gameID = subjectGame.gameID();
 
-            if (Objects.equals(playerColor, "white")){
+            if (Objects.equals(playerColor, "white")) {
                 JoinData joinSend = new JoinData("WHITE", gameID);
                 ServerFacade.joinGame(joinSend);
 
@@ -71,16 +71,16 @@ public class PostLoginUI {
                 PreLoginUI.state = UIState.IN_GAME;
 
                 WSFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
-            }
+                return "\n";
 
-            else if(Objects.equals(playerColor, ".")){
+            } else if (Objects.equals(playerColor, ".")) {
                 JoinData joinSend = new JoinData(null, gameID);
                 ServerFacade.joinGame(joinSend);
                 PreLoginUI.state = UIState.IN_GAME;
                 wideGameID = gameID;
+                WSFacade.joinGame(PostLoginUI.authToken,gameID, null);
                 return "Successfully joined as Observer\n";
             }
-
             else {
                 JoinData joinSend = new JoinData("BLACK", gameID);
                 ServerFacade.joinGame(joinSend);
@@ -90,8 +90,9 @@ public class PostLoginUI {
                 widePlayerColor = ChessGame.TeamColor.BLACK;
 
                 WSFacade.joinGame(PostLoginUI.authToken, wideGameID, widePlayerColor);
+                return "Successfully joined as Black\n";
             }
         }
-        throw new ResponseException(400, "Bad Request");
+            throw new ResponseException(400, "Bad Request\n");
     }
 }

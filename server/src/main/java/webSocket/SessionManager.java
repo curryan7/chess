@@ -32,9 +32,13 @@ public class SessionManager {
 
         String username = MySqlDataAccess.getUsername(auth);
         switch (modelType) {
-            case JOIN_OBSERVER, JOIN_PLAYER:
+            case JOIN_PLAYER:
                 Notification addMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as " + color);
                 announce(currentSession, addMessage, gameID);
+                break;
+            case JOIN_OBSERVER:
+                Notification observerMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined as an observer");
+                announce(currentSession, observerMessage, gameID);
                 break;
             case MAKE_MOVE:
                 Notification moveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has moved a piece");

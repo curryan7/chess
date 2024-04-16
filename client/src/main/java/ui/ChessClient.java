@@ -35,8 +35,9 @@ public class ChessClient {
             else {
                 return switch(cmd){
                     case "leave"-> InGameUI.leaveGame();
-                    case "makemove"-> InGameUI.makeMove();
+                    case "makemove"-> InGameUI.makeMove(params);
                     case "resign"-> InGameUI.resignGame();
+                    case "redraw" -> InGameUI.redraw();
                     default -> Repl.help();
 
                 };

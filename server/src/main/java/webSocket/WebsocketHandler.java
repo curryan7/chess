@@ -40,9 +40,13 @@ public class WebsocketHandler {
             case RESIGN:
                 resign(session, message);
                 break;
-            default:
-                System.out.println("shit");
         }
+    }
+
+    @OnWebSocketError
+    public void onWebsocketError(Session session, Throwable throwable) {
+        System.err.println("WebSocket encountered an error:");
+        throwable.printStackTrace();
     }
 
     static ChessGame.TeamColor wideColor;
@@ -102,7 +106,7 @@ public class WebsocketHandler {
                     assert gameStuff != null;
                     if (Objects.equals(userName, gameStuff.blackUsername())) {
                         sessions.add(focusPlayer.getCommandType(),auth, session, gameID, colorString);
-                        loadNewGame(auth,gameID, session);
+                        loadNewGame(auth,gameID,session);
                         wideColor = ChessGame.TeamColor.BLACK;
                         gameFinished = false;
                         resignToken = false;
@@ -232,6 +236,7 @@ public class WebsocketHandler {
             Notification resignationMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned");
             sessions.announce(session, resignationMessage,gameID);
             session.getRemote().sendString(new Gson().toJson(resignationMessage));
+
         }
         else {
             sessions.bounce(auth,session,gameID,null);
@@ -257,6 +262,7 @@ public class WebsocketHandler {
             Notification leaveMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,username + " has left the game.");
             sessions.announce(session,leaveMessage,gameID);
         }
+
 
     }
 }

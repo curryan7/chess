@@ -89,6 +89,17 @@ public class WSFacade extends Endpoint{
         send(new Gson().toJson(mover));
     }
 
+    public static void redraw(){
+        if (PostLoginUI.widePlayerColor == ChessGame.TeamColor.BLACK){
+            int orientation = 1;
+            ChessDesign.finalDraw(orientation);
+        }
+        else if (PostLoginUI.widePlayerColor == ChessGame.TeamColor.WHITE){
+            int orientation = 2;
+            ChessDesign.finalDraw(orientation);
+        }
+    }
+
 
     public static void processNotification(Notification message){
         String shoutout = message.getMessage();

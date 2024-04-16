@@ -28,7 +28,7 @@ public class PreLoginUI {
                 throw new ResponseException(400, "Missing Fields");
             }
         }
-        return "you are now logged in";
+        return "you are now logged in\n";
     }
 
     public static String register(String... params) throws ResponseException {
@@ -45,7 +45,7 @@ public class PreLoginUI {
             if(authToken != null){
                 ChessClient.authToken = authToken;
                 state = UIState.POST_LOGIN;
-                return "you are now logged in as "+username;
+                return "you are now logged in as "+username +"\n";
             }
             else{
                 throw new ResponseException(400, "Missing Fields");

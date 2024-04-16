@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -22,7 +23,7 @@ public class InGameUI {
 
         GameList gamelist = ServerFacade.listgames();
         ArrayList<GameData> listOfGames = gamelist.games();
-        return "you left the game";
+        return "you left the game\n";
     }
 
     public static String makeMove(String... params) throws Exception {
@@ -40,19 +41,24 @@ public class InGameUI {
             String auth = PostLoginUI.authToken;
             WSFacade.makeMoves(auth, gameID, moves);
 
-            return "next player's turn";
+            return "next player's turn\n";
         }
-        return "enter a properly formatted move";
+        return "enter a properly formatted move\n";
     }
     public static String resignGame() throws Exception {
         int gameID = PostLoginUI.wideGameID;
         String auth = PostLoginUI.authToken;
         try {
             WSFacade.resignGame(auth, gameID);
-            return "You have resigned";
+            return "\n";
         }
         catch (Exception e){
             throw new Exception("resign unsuccessful");
         }
+    }
+
+    public static String redraw() {
+        WSFacade.redraw();
+        return "\n";
     }
 }
