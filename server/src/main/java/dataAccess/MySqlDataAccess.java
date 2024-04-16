@@ -70,20 +70,6 @@ public class MySqlDataAccess {
         }
     }
 
-    public static void deleteGame(int gameID) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            var deleteAuthStatement = """
-                            DELETE FROM Games WHERE GameID=?;
-                    """;
-            try (var deleteStatement = conn.prepareStatement(deleteAuthStatement)) {
-                deleteStatement.setInt(1, gameID);
-                deleteStatement.executeUpdate();
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new DataAccessException("Error: bad request");
-        }
-    }
-
     public static String getUsername(String auth) throws SQLException, DataAccessException{
         try(var conn = DatabaseManager.getConnection()){
             var grabUserStatement = """

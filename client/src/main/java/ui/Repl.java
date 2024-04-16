@@ -18,7 +18,6 @@ public class Repl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
-//            printPrompt();
             String line = scanner.nextLine();
 
             try {
@@ -61,8 +60,5 @@ public class Repl {
                 - highlighmoves<piece row #><piece column #>
                     """;
         }
-    }
-    private void printPrompt() {
-        System.out.print("\n");
     }
 }
