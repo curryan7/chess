@@ -39,6 +39,7 @@ public class WSFacade extends Endpoint{
         session = container.connectToServer(this, uri);
 
         session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
             public void onMessage(String message) {
                 Gson gson = new Gson();
                 ServerMessage jump = gson.fromJson(message, ServerMessage.class);
@@ -140,6 +141,7 @@ public class WSFacade extends Endpoint{
         session.getBasicRemote().sendText(msg);
     }
 
+    @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
